@@ -1,0 +1,40 @@
+<!doctype html>
+<html class="no-js" lang="ja">
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles.css">
+<script src="../libs/jquery.js"></script>
+<script src="../jquery.touchdrag.js"></script>
+<script>
+$(function() {
+  $('.box').each(function() {
+    var $el = $(this);
+    $el.touchdrag({
+      inner: '.box-inner'
+    })
+    var instance = $el.data('touchdrag')
+    $(window).on('resize', function() {
+      instance.refresh();
+    });
+  });
+});
+</script>
+</head>
+<body>
+
+<div class="box">
+  <div class="box-inner">
+    THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
+  </div>
+</div>
+
+<div class="box">
+  <div class="box-inner">
+    THE <a href="http://example.com">QUICK</a> BROWN FOX JUMPS OVER THE <a href="http://example.com">LAZY</a> DOG.
+  </div>
+</div>
+
+</body>
+</html>

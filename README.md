@@ -1,5 +1,7 @@
 # jQuery.touchdrag
 
+NOTE: STILL IN DEV.
+
 drag element by touch
 
 ## Required

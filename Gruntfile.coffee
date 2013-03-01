@@ -19,6 +19,8 @@ module.exports = (grunt) ->
     coffee:
 
       touchdrag:
+        options:
+          bare: true
         files: [ 'jquery.touchdrag.coffee' ]
         dest: 'jquery.touchdrag.js'
 
