@@ -23,8 +23,8 @@ do (@$=jQuery, @window=window, @document = document) ->
   # detect / normalize event names
 
   ns.support = {}
-  ns.support.addEventListener = `'addEventListener' in document`
-  ns.support.touch = `'ontouchend' in document`
+  ns.support.addEventListener = 'addEventListener' of document
+  ns.support.touch = 'ontouchend' of document
   ns.support.mspointer = window.navigator.msPointerEnabled or false
 
   ns.touchStartEventName = do ->
