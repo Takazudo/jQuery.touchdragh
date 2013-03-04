@@ -395,16 +395,14 @@ var __slice = [].slice,
     return TouchdragEl;
 
   })(ns.Event);
-  $.fn.touchdrag = function(options) {
+  return $.fn.touchdrag = function(options) {
     this.options = options != null ? options : {};
-    this.each(function(i, el) {
+    return this.each(function(i, el) {
       var $el, instance;
       $el = $(el);
       instance = new ns.TouchdragEl($el, options);
       $el.data('touchdrag', instance);
       return this;
     });
-    return this;
   };
-  return this;
 })(jQuery, window, document);

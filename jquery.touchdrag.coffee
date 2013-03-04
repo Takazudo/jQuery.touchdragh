@@ -334,7 +334,3 @@ do (@$=jQuery, @window=window, @document = document) ->
       instance = new ns.TouchdragEl $el, options
       $el.data 'touchdrag', instance
       @
-    @
-
-  @
-  
