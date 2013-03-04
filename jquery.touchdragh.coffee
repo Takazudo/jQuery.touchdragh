@@ -1,5 +1,5 @@
 # encapsulate plugin
-do ($=jQuery, window=window, document = document) ->
+do ($=jQuery, window=window, document=document) ->
 
   $document = $(document)
 

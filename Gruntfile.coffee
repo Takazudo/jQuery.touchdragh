@@ -15,7 +15,8 @@ module.exports = (grunt) ->
  * lastupdate: <%= grunt.template.today("yyyy-mm-dd") %>
  * version: <%= pkg.version %>
  * author: <%= pkg.author %>
- * License: MIT */\n
+ * License: MIT */
+
 """
 
     growl:
