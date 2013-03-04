@@ -363,3 +363,5 @@ do ($=jQuery, window=window, document=document) ->
       $el.data 'touchdragh', instance
       @
 
+  $.Touchdragh = ns.TouchdraghEl
+

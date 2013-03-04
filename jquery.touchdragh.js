@@ -434,7 +434,7 @@
       return TouchdraghEl;
 
     })(ns.Event);
-    return $.fn.touchdragh = function(options) {
+    $.fn.touchdragh = function(options) {
       if (options == null) {
         options = {};
       }
@@ -446,6 +446,7 @@
         return this;
       });
     };
+    return $.Touchdragh = ns.TouchdraghEl;
   })(jQuery, window, document);
 
 }).call(this);
