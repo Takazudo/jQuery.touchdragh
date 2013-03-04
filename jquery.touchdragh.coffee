@@ -184,9 +184,11 @@ do ($=jQuery, window=window, document=document) ->
     defaults:
       backanim_duration: 250
       backanim_easing: 'swing'
+      beforefirstrefresh: null
 
     constructor: (@$el, options) ->
 
+      @_firstRefreshDone = false
       @el = @$el[0]
       @options = $.extend {}, @defaults, options
       @disabled = false
@@ -201,6 +203,12 @@ do ($=jQuery, window=window, document=document) ->
       @_calcMinMaxLeft()
       @_handleTooNarrow()
       @_handleInnerOver()
+      unless @_firstRefreshDone
+        if @options.beforefirstrefresh
+          @options.beforefirstrefresh(@)
+        @trigger 'touchdragh.firstrefresh'
+        @_firstRefreshDone = true
+      @trigger 'touchdragh.refresh'
       @
 
     _handlePointerEvents: ->
@@ -303,10 +311,10 @@ do ($=jQuery, window=window, document=document) ->
       @trigger 'touchdragh.move', data
       @
 
-    _handleInnerOver: (triggerEvent = false) ->
+    _handleInnerOver: (invokeEndEvent = false) ->
       return @ if @isInnerTooNarrow()
       triggerEvent = =>
-        @trigger 'touchdragh.end' if triggerEvent
+        @trigger 'touchdragh.end' if invokeEndEvent
       to = null
       left = ns.getLeftPx @$inner
       overMax = left > @_maxLeft

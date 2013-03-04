@@ -50,7 +50,7 @@ module.exports = (grunt) ->
     watch:
 
       touchdragh:
-        files: '<%= coffee.touchdragh.files %>'
+        files: '<%= coffee.touchdragh.src %>'
         tasks: [
           'default'
         ]

@@ -15,23 +15,31 @@ $(function() {
 
   $('.box').each(function() {
 
+    var instance;
+
     var $el = $(this);
     $el.touchdragh({
-      inner: '.box-inner'
+      inner: '.box-inner',
+      beforefirstrefresh: function(instance) {
+        instance.on('touchdragh.start', function() {
+          console.log('touchdragh.start');
+        }).on('touchdragh.drag', function() {
+          console.log('touchdragh.drag');
+        }).on('touchdragh.end', function() {
+          console.log('touchdragh.end');
+        }).on('touchdragh.refresh', function() {
+          console.log('touchdragh.refresh');
+        }).on('touchdragh.firstrefresh', function() {
+          console.log('touchdragh.firstrefresh');
+        });
+
+      }
     });
 
-    var instance = $el.data('touchdragh');
+    instance = $el.data('touchdragh');
 
     $(window).on('resize', function() {
       instance.refresh();
-    });
-
-    instance.on('touchdragh.start', function() {
-      console.log('touchdragh.start');
-    }).on('touchdragh.drag', function() {
-      console.log('touchdragh.drag');
-    }).on('touchdragh.end', function() {
-      console.log('touchdragh.end');
     });
 
   });

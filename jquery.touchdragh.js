@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-03-04
+ * lastupdate: 2013-03-05
  * version: 0.0.0
  * author: Takeshi Takatsudo 'Takazudo' <takazudo@gmail.com>
  * License: MIT */
@@ -228,7 +228,8 @@
 
       TouchdraghEl.prototype.defaults = {
         backanim_duration: 250,
-        backanim_easing: 'swing'
+        backanim_easing: 'swing',
+        beforefirstrefresh: null
       };
 
       function TouchdraghEl($el, options) {
@@ -236,6 +237,7 @@
         this._handleTouchEnd = __bind(this._handleTouchEnd, this);
         this._handleTouchMove = __bind(this._handleTouchMove, this);
         this._handleTouchStart = __bind(this._handleTouchStart, this);
+        this._firstRefreshDone = false;
         this.el = this.$el[0];
         this.options = $.extend({}, this.defaults, options);
         this.disabled = false;
@@ -250,6 +252,14 @@
         this._calcMinMaxLeft();
         this._handleTooNarrow();
         this._handleInnerOver();
+        if (!this._firstRefreshDone) {
+          if (this.options.beforefirstrefresh) {
+            this.options.beforefirstrefresh(this);
+          }
+          this.trigger('touchdragh.firstrefresh');
+          this._firstRefreshDone = true;
+        }
+        this.trigger('touchdragh.refresh');
         return this;
       };
 
@@ -356,17 +366,17 @@
         return this;
       };
 
-      TouchdraghEl.prototype._handleInnerOver = function(triggerEvent) {
-        var belowMin, d, e, left, overMax, to,
+      TouchdraghEl.prototype._handleInnerOver = function(invokeEndEvent) {
+        var belowMin, d, e, left, overMax, to, triggerEvent,
           _this = this;
-        if (triggerEvent == null) {
-          triggerEvent = false;
+        if (invokeEndEvent == null) {
+          invokeEndEvent = false;
         }
         if (this.isInnerTooNarrow()) {
           return this;
         }
         triggerEvent = function() {
-          if (triggerEvent) {
+          if (invokeEndEvent) {
             return _this.trigger('touchdragh.end');
           }
         };
