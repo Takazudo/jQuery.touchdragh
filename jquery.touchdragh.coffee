@@ -1,22 +1,29 @@
 # encapsulate plugin
-do (@$=jQuery, @window=window, @document = document) ->
+do ($=jQuery, window=window, document = document) ->
 
   $document = $(document)
 
-  ns = $.TouchdragNs = {}
+  ns = $.TouchdraghNs = {}
 
   # ============================================================
   # pageX/Y normalizer
 
   ns.normalizeXY = (event) ->
+
     res = {}
+    orig = event.originalEvent
+
+    # for touch event supported browsers
     if ns.support.touch
-      touch = event.originalEvent.changedTouches[0]
+      touch = orig.changedTouches[0]
       res.x = touch.pageX
       res.y = touch.pageY
+
     else
-      res.x = event.pageX
-      res.y = event.pageY
+      # jQuery cannnot handle pointerevents, so check orig.pageX/Y too.
+      res.x = event.pageX or orig.pageX
+      res.y = event.pageY or orig.pageY
+
     res
 
   # ============================================================
@@ -41,7 +48,7 @@ do (@$=jQuery, @window=window, @document = document) ->
     return 'MSPointerUp' if ns.support.mspointer
     return 'touchend' if ns.support.touch
     'mouseup'
-
+  
   # ============================================================
   # left value getter
 
@@ -52,39 +59,6 @@ do (@$=jQuery, @window=window, @document = document) ->
     else
       l = (l.replace /px/, '') * 1
     l
-
-  # ============================================================
-  # left animator
-
-  ns.animateLeft = (el, x, transitionDuration, callback) ->
-
-    done = false
-
-    begin = +new Date()
-    from = parseInt(el.style.left, 10)
-    to = x
-    duration = transitionDuration
-
-    easing = (time, duration) ->
-      -(time /= duration) * (time - 2)
-
-    timer = setInterval ->
-      time = new Date() - begin
-      pos = null
-      now = null
-      if time > duration
-        clearInterval timer
-        now = to
-        done = true
-      else
-        pos = easing(time, duration)
-        now = pos * (to - from) + from
-      el.style.left = now + "px"
-      if done and callback?
-        callback()
-    , 10
-
-    @
 
   # ============================================================
   # gesture handler
@@ -159,6 +133,7 @@ do (@$=jQuery, @window=window, @document = document) ->
     applyTouchStart: (touchStartEvent) ->
 
       coords = ns.normalizeXY touchStartEvent
+
       @startPageX = coords.x
       @startPageY = coords.y
       @
@@ -189,17 +164,20 @@ do (@$=jQuery, @window=window, @document = document) ->
       @
 
   # ============================================================
-  # TouchdragEl
+  # TouchdraghEl
 
-  class ns.TouchdragEl extends ns.Event
+  class ns.TouchdraghEl extends ns.Event
 
     defaults:
-      transitionDuration: 250
+      backanim_duration: 250
+      backanim_easing: 'swing'
 
     constructor: (@$el, options) ->
 
       @el = @$el[0]
       @options = $.extend {}, @defaults, options
+      @disabled = false
+      
       ns.startWatchGestures()
       @_handlePointerEvents()
       @_prepareEls()
@@ -208,6 +186,7 @@ do (@$=jQuery, @window=window, @document = document) ->
 
     refresh: ->
       @_calcMinMaxLeft()
+      @_handleTooNarrow()
       @_handleInnerOver()
       @
 
@@ -240,6 +219,8 @@ do (@$=jQuery, @window=window, @document = document) ->
 
     _handleTouchStart: (event) =>
 
+      return @ if @disabled
+
       # It'll be bugged if gestured
       return @ if ns.whileGesture
 
@@ -255,8 +236,9 @@ do (@$=jQuery, @window=window, @document = document) ->
         @_whileDrag = false
       d.on 'xscrolldetected', =>
         @_shouldSlideInner = true
-        @trigger 'touchdrag.start'
+        @trigger 'touchdragh.start'
       d.on 'dragmove', (data) =>
+        @trigger 'touchdragh.drag'
         @_moveInner data.x
 
       @_innerStartLeft = ns.getLeftPx @$inner
@@ -288,7 +270,7 @@ do (@$=jQuery, @window=window, @document = document) ->
       @_currentDrag.destroy()
 
       # if inner was over, fit it to inside.
-      @_handleInnerOver()
+      @_handleInnerOver true
       @
 
     _moveInner: (x) ->
@@ -302,12 +284,13 @@ do (@$=jQuery, @window=window, @document = document) ->
 
       @$inner.css 'left', left
       data = { left: left }
-      @trigger 'touchdrag.move', data
+      @trigger 'touchdragh.move', data
       @
 
-    _handleInnerOver: ->
+    _handleInnerOver: (triggerEvent = false) ->
+      return @ if @isInnerTooNarrow()
       triggerEvent = =>
-        @trigger 'touchdrag.end'
+        @trigger 'touchdragh.end' if triggerEvent
       to = null
       left = ns.getLeftPx @$inner
       overMax = left > @_maxLeft
@@ -319,18 +302,40 @@ do (@$=jQuery, @window=window, @document = document) ->
         to = @_maxLeft
       if belowMin
         to = @_minLeft
-      ns.animateLeft @$inner[0], to, @options.transitionDuration, =>
+      d = @options.backanim_duration
+      e = @options.backanim_easing
+      @$inner.stop().animate { left: to }, d, e, =>
         triggerEvent()
       @
 
-      
+    _handleTooNarrow: ->
+      if @isInnerTooNarrow()
+        @disable()
+        @$inner.css 'left', 0
+      else
+        @enable()
+      @
+
+    isInnerTooNarrow: ->
+      elW = @$el.width()
+      innerW = @$inner.width()
+      innerW <= elW
+
+    disable: ->
+      @disabled = true
+      @
+
+    enable: ->
+      @disabled = false
+      @
 
   # ============================================================
   # bridge to plugin
 
-  $.fn.touchdrag = (@options = {}) ->
+  $.fn.touchdragh = (options = {}) ->
     @each (i, el) ->
       $el = $(el)
-      instance = new ns.TouchdragEl $el, options
-      $el.data 'touchdrag', instance
+      instance = new ns.TouchdraghEl $el, options
+      $el.data 'touchdragh', instance
       @
+

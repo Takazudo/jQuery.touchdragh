@@ -18,11 +18,9 @@ module.exports = (grunt) ->
 
     coffee:
 
-      touchdrag:
-        options:
-          bare: true
-        files: [ 'jquery.touchdrag.coffee' ]
-        dest: 'jquery.touchdrag.js'
+      touchdragh:
+        files: [ 'jquery.touchdragh.coffee' ]
+        dest: 'jquery.touchdragh.js'
 
     concat:
 
@@ -35,21 +33,21 @@ module.exports = (grunt) ->
  * author: <%= pkg.author %>
  * License: MIT */\n
 """
-        src: [ '<%= coffee.touchdrag.dest %>' ]
-        dest: '<%= coffee.touchdrag.dest %>'
+        src: [ '<%= coffee.touchdragh.dest %>' ]
+        dest: '<%= coffee.touchdragh.dest %>'
         
     uglify:
 
       options:
         preverveComments: 'some'
-      touchdrag:
+      touchdragh:
         src: '<%= concat.banner.dest %>'
-        dest: 'jquery.touchdrag.min.js'
+        dest: 'jquery.touchdragh.min.js'
 
     watch:
 
-      touchdrag:
-        files: '<%= coffee.touchdrag.files %>'
+      touchdragh:
+        files: '<%= coffee.touchdragh.files %>'
         tasks: [
           'default'
         ]
