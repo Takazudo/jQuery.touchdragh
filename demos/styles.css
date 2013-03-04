@@ -3,7 +3,7 @@
   padding:0;
 }
 body {
-  padding:20px;
+  padding:20px 16px;
   font-family:sans-serif;
 }
 
@@ -16,10 +16,12 @@ body {
   overflow:hidden;
   -webkit-user-select:none;
   -moz-user-select:none;
+  -ms-user-select:none;
   user-select:none;
   cursor:move;
   margin:0 auto 20px;
   position:relative;
+	border:2px solid #000;
 }
 .box,
 .box * {

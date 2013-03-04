@@ -2,6 +2,7 @@ module.exports = (grunt) ->
   
   utils = (require './gruntcomponents/misc/commonutils')(grunt)
   grunt.task.loadTasks 'gruntcomponents/tasks'
+  grunt.task.loadNpmTasks 'grunt-contrib-coffee'
   grunt.task.loadNpmTasks 'grunt-contrib-watch'
   grunt.task.loadNpmTasks 'grunt-contrib-concat'
   grunt.task.loadNpmTasks 'grunt-contrib-uglify'
@@ -9,6 +10,13 @@ module.exports = (grunt) ->
   grunt.initConfig
 
     pkg: grunt.file.readJSON('package.json')
+    banner: """
+/*! <%= pkg.name %> (<%= pkg.repository.url %>)
+ * lastupdate: <%= grunt.template.today("yyyy-mm-dd") %>
+ * version: <%= pkg.version %>
+ * author: <%= pkg.author %>
+ * License: MIT */\n
+"""
 
     growl:
 
@@ -19,27 +27,21 @@ module.exports = (grunt) ->
     coffee:
 
       touchdragh:
-        files: [ 'jquery.touchdragh.coffee' ]
+        src: [ 'jquery.touchdragh.coffee' ]
         dest: 'jquery.touchdragh.js'
 
     concat:
 
       banner:
         options:
-          banner: """
-/*! <%= pkg.name %> (<%= pkg.repository.url %>)
- * lastupdate: <%= grunt.template.today("yyyy-mm-dd") %>
- * version: <%= pkg.version %>
- * author: <%= pkg.author %>
- * License: MIT */\n
-"""
+          banner: '<%= banner %>'
         src: [ '<%= coffee.touchdragh.dest %>' ]
         dest: '<%= coffee.touchdragh.dest %>'
         
     uglify:
 
       options:
-        preverveComments: 'some'
+        banner: '<%= banner %>'
       touchdragh:
         src: '<%= concat.banner.dest %>'
         dest: 'jquery.touchdragh.min.js'

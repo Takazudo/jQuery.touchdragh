@@ -233,12 +233,13 @@ do ($=jQuery, window=window, document = document) ->
     _handleTouchStart: (event) =>
 
       return @ if @disabled
+      return @ if @_whileDrag
 
       # It'll be bugged if gestured
       return @ if ns.whileGesture
 
       # prevent if mouseclick
-      event.preventDefault() unless ns.support.touch
+      event.preventDefault() if event.type is 'mouedown'
 
       @_whileDrag = true
       @_shouldSlideInner = false
@@ -275,6 +276,8 @@ do ($=jQuery, window=window, document = document) ->
       @
 
     _handleTouchEnd: (event) =>
+
+      @_whileDrag = false
 
       # unbind everything about this drag
       $document.off ns.touchMoveEventName, @_handleTouchMove
