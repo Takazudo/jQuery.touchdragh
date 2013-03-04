@@ -18,7 +18,7 @@
       var orig, res, touch;
       res = {};
       orig = event.originalEvent;
-      if (ns.support.touch) {
+      if (orig.changedTouches != null) {
         touch = orig.changedTouches[0];
         res.x = touch.pageX;
         res.y = touch.pageY;
@@ -29,12 +29,17 @@
       return res;
     };
     ns.support = {};
+    ns.ua = {};
     ns.support.addEventListener = 'addEventListener' in document;
     ns.support.touch = 'ontouchend' in document;
     ns.support.mspointer = window.navigator.msPointerEnabled || false;
+    ns.ua.win8 = /Windows NT 6\.2/i.test(navigator.userAgent);
     ns.touchStartEventName = (function() {
       if (ns.support.mspointer) {
         return 'MSPointerDown';
+      }
+      if (ns.ua.win8) {
+        return 'touchstart mousedown';
       }
       if (ns.support.touch) {
         return 'touchstart';
@@ -45,6 +50,9 @@
       if (ns.support.mspointer) {
         return 'MSPointerMove';
       }
+      if (ns.ua.win8) {
+        return 'touchmove mousemove';
+      }
       if (ns.support.touch) {
         return 'touchmove';
       }
@@ -53,6 +61,9 @@
     ns.touchEndEventName = (function() {
       if (ns.support.mspointer) {
         return 'MSPointerUp';
+      }
+      if (ns.ua.win8) {
+        return 'touchend mouseup';
       }
       if (ns.support.touch) {
         return 'touchend';

@@ -13,12 +13,11 @@ do ($=jQuery, window=window, document = document) ->
     res = {}
     orig = event.originalEvent
 
-    # for touch event supported browsers
-    if ns.support.touch
+    if orig.changedTouches?
+      # if it was a touch event
       touch = orig.changedTouches[0]
       res.x = touch.pageX
       res.y = touch.pageY
-
     else
       # jQuery cannnot handle pointerevents, so check orig.pageX/Y too.
       res.x = event.pageX or orig.pageX
@@ -30,25 +29,39 @@ do ($=jQuery, window=window, document = document) ->
   # detect / normalize event names
 
   ns.support = {}
+  ns.ua = {}
+
   ns.support.addEventListener = 'addEventListener' of document
+
+  # from Modernizr
   ns.support.touch = 'ontouchend' of document
+
+  # http://msdn.microsoft.com/en-us/library/ie/hh673557(v=vs.85).aspx
   ns.support.mspointer = window.navigator.msPointerEnabled or false
 
+  # http://msdn.microsoft.com/en-us/library/ie/hh920767(v=vs.85).aspx
+  ns.ua.win8 = /Windows NT 6\.2/i.test navigator.userAgent
+
+  # for win8 modern browsers, we need to bind both events
+  
   ns.touchStartEventName = do ->
     return 'MSPointerDown' if ns.support.mspointer
+    return 'touchstart mousedown' if ns.ua.win8
     return 'touchstart' if ns.support.touch
     'mousedown'
 
   ns.touchMoveEventName = do ->
     return 'MSPointerMove' if ns.support.mspointer
+    return 'touchmove mousemove' if ns.ua.win8
     return 'touchmove' if ns.support.touch
     'mousemove'
 
   ns.touchEndEventName = do ->
     return 'MSPointerUp' if ns.support.mspointer
+    return 'touchend mouseup' if ns.ua.win8
     return 'touchend' if ns.support.touch
     'mouseup'
-  
+
   # ============================================================
   # left value getter
 
