@@ -312,23 +312,28 @@ do ($=jQuery, window=window, document=document) ->
       @
 
     _handleInnerOver: (invokeEndEvent = false) ->
+
       return @ if @isInnerTooNarrow()
+
       triggerEvent = =>
         @trigger 'touchdragh.end' if invokeEndEvent
       to = null
+
       left = ns.getLeftPx @$inner
+
+      # check if left is over
       overMax = left > @_maxLeft
       belowMin = left < @_minLeft
       unless overMax or belowMin
         triggerEvent()
         return @
-      if overMax
-        to = @_maxLeft
-      if belowMin
-        to = @_minLeft
-      d = @options.backanim_duration
-      e = @options.backanim_easing
-      @$inner.stop().animate { left: to }, d, e, =>
+
+      # normalize left
+      to = @_maxLeft if overMax
+      to = @_minLeft if belowMin
+
+      # then do slide
+      @slideInner to, true, =>
         triggerEvent()
       @
 
@@ -352,6 +357,29 @@ do ($=jQuery, window=window, document=document) ->
     enable: ->
       @disabled = false
       @
+
+    slideInner: (val, animate=false, callback) ->
+
+      val = @_maxLeft if val > @_maxLeft
+      val = @_minLeft if val < @_minLeft
+
+      d = @options.backanim_duration
+      e = @options.backanim_easing
+
+      to = { left: val }
+
+      $.Deferred (defer) =>
+        @trigger 'touchdragh.beforeinnerslide'
+        onDone = =>
+          @trigger 'touchdragh.afterinnerslide'
+          callback() if callback?
+          defer.resolve()
+        if animate
+          @$inner.stop().animate to, d, e, => onDone()
+        else
+          @$inner.stop().css to
+          onDone()
+      .promise()
 
   # ============================================================
   # bridge to plugin

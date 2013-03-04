@@ -10,8 +10,13 @@
 <script>
 $(function() {
 
-	var console = window.console || {};
-	console.log = console.log || $.noop;
+  var console = window.console || {};
+  console.log = console.log || $.noop;
+
+  var $button1 = $('#button1');
+  var $button2 = $('#button2');
+  var $button3 = $('#button3');
+  var $button4 = $('#button4');
 
   $('.box').each(function() {
 
@@ -31,12 +36,20 @@ $(function() {
           console.log('touchdragh.refresh');
         }).on('touchdragh.firstrefresh', function() {
           console.log('touchdragh.firstrefresh');
+        }).on('touchdragh.beforeinnerslide', function() {
+          console.log('touchdragh.beforeinnerslide');
+        }).on('touchdragh.afterinnerslide', function() {
+          console.log('touchdragh.afterinnerslide');
         });
-
       }
     });
 
     instance = $el.data('touchdragh');
+
+    $button1.click(function() { instance.slideInner(-200); });
+    $button2.click(function() { instance.slideInner(-500, true); });
+    $button3.click(function() { instance.slideInner(-9999); });
+    $button4.click(function() { instance.slideInner(0); });
 
     $(window).on('resize', function() {
       instance.refresh();
@@ -48,16 +61,23 @@ $(function() {
 </head>
 <body>
 
-<div class="box">
+<div class="box" id="box1">
   <div class="box-inner">
     THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
   </div>
 </div>
 
-<div class="box">
+<div class="box" id="box2">
   <div class="box-inner">
     THE <a href="http://example.com">QUICK</a> BROWN FOX JUMPS OVER THE <a href="http://example.com">LAZY</a> DOG.
   </div>
+</div>
+
+<div class="buttons">
+  <button id="button1">slideInner(-200)</button>
+  <button id="button2">slideInner(-500, true)</button>
+  <button id="button3">slideInner(-9999)</button>
+  <button id="button4">slideInner(0)</button>
 </div>
 
 </body>

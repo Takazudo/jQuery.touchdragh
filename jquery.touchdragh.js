@@ -367,7 +367,7 @@
       };
 
       TouchdraghEl.prototype._handleInnerOver = function(invokeEndEvent) {
-        var belowMin, d, e, left, overMax, to, triggerEvent,
+        var belowMin, left, overMax, to, triggerEvent,
           _this = this;
         if (invokeEndEvent == null) {
           invokeEndEvent = false;
@@ -394,11 +394,7 @@
         if (belowMin) {
           to = this._minLeft;
         }
-        d = this.options.backanim_duration;
-        e = this.options.backanim_easing;
-        this.$inner.stop().animate({
-          left: to
-        }, d, e, function() {
+        this.slideInner(to, true, function() {
           return triggerEvent();
         });
         return this;
@@ -429,6 +425,44 @@
       TouchdraghEl.prototype.enable = function() {
         this.disabled = false;
         return this;
+      };
+
+      TouchdraghEl.prototype.slideInner = function(val, animate, callback) {
+        var d, e, to,
+          _this = this;
+        if (animate == null) {
+          animate = false;
+        }
+        if (val > this._maxLeft) {
+          val = this._maxLeft;
+        }
+        if (val < this._minLeft) {
+          val = this._minLeft;
+        }
+        d = this.options.backanim_duration;
+        e = this.options.backanim_easing;
+        to = {
+          left: val
+        };
+        return $.Deferred(function(defer) {
+          var onDone;
+          _this.trigger('touchdragh.beforeinnerslide');
+          onDone = function() {
+            _this.trigger('touchdragh.afterinnerslide');
+            if (callback != null) {
+              callback();
+            }
+            return defer.resolve();
+          };
+          if (animate) {
+            return _this.$inner.stop().animate(to, d, e, function() {
+              return onDone();
+            });
+          } else {
+            _this.$inner.stop().css(to);
+            return onDone();
+          }
+        }).promise();
       };
 
       return TouchdraghEl;
