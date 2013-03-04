@@ -381,7 +381,7 @@
           }
         };
         to = null;
-        left = ns.getLeftPx(this.$inner);
+        left = this.currentSlideLeft();
         overMax = left > this._maxLeft;
         belowMin = left < this._minLeft;
         if (!(overMax || belowMin)) {
@@ -394,7 +394,7 @@
         if (belowMin) {
           to = this._minLeft;
         }
-        this.slideInner(to, true, function() {
+        this.slide(to, true, function() {
           return triggerEvent();
         });
         return this;
@@ -427,7 +427,7 @@
         return this;
       };
 
-      TouchdraghEl.prototype.slideInner = function(val, animate, callback) {
+      TouchdraghEl.prototype.slide = function(val, animate, callback) {
         var d, e, to,
           _this = this;
         if (animate == null) {
@@ -446,9 +446,9 @@
         };
         return $.Deferred(function(defer) {
           var onDone;
-          _this.trigger('touchdragh.beforeinnerslide');
+          _this.trigger('touchdragh.beforeslide');
           onDone = function() {
-            _this.trigger('touchdragh.afterinnerslide');
+            _this.trigger('touchdragh.afterslide');
             if (callback != null) {
               callback();
             }
@@ -463,6 +463,10 @@
             return onDone();
           }
         }).promise();
+      };
+
+      TouchdraghEl.prototype.currentSlideLeft = function() {
+        return ns.getLeftPx(this.$inner);
       };
 
       return TouchdraghEl;

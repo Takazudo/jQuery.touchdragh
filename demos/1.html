@@ -36,20 +36,20 @@ $(function() {
           console.log('touchdragh.refresh');
         }).on('touchdragh.firstrefresh', function() {
           console.log('touchdragh.firstrefresh');
-        }).on('touchdragh.beforeinnerslide', function() {
-          console.log('touchdragh.beforeinnerslide');
-        }).on('touchdragh.afterinnerslide', function() {
-          console.log('touchdragh.afterinnerslide');
+        }).on('touchdragh.beforeslide', function() {
+          console.log('touchdragh.beforeslide');
+        }).on('touchdragh.afterslide', function() {
+          console.log('touchdragh.afterslide');
         });
       }
     });
 
     instance = $el.data('touchdragh');
 
-    $button1.click(function() { instance.slideInner(-200); });
-    $button2.click(function() { instance.slideInner(-500, true); });
-    $button3.click(function() { instance.slideInner(-9999); });
-    $button4.click(function() { instance.slideInner(0); });
+    $button1.click(function() { instance.slide(-200); });
+    $button2.click(function() { instance.slide(-500, true); });
+    $button3.click(function() { instance.slide(-9999); });
+    $button4.click(function() { instance.slide(0); });
 
     $(window).on('resize', function() {
       instance.refresh();
@@ -74,10 +74,10 @@ $(function() {
 </div>
 
 <div class="buttons">
-  <button id="button1">slideInner(-200)</button>
-  <button id="button2">slideInner(-500, true)</button>
-  <button id="button3">slideInner(-9999)</button>
-  <button id="button4">slideInner(0)</button>
+  <button id="button1">slide(-200)</button>
+  <button id="button2">slide(-500, true)</button>
+  <button id="button3">slide(-9999)</button>
+  <button id="button4">slide(0)</button>
 </div>
 
 </body>

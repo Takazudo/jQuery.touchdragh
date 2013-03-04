@@ -319,7 +319,7 @@ do ($=jQuery, window=window, document=document) ->
         @trigger 'touchdragh.end' if invokeEndEvent
       to = null
 
-      left = ns.getLeftPx @$inner
+      left = @currentSlideLeft()
 
       # check if left is over
       overMax = left > @_maxLeft
@@ -333,7 +333,7 @@ do ($=jQuery, window=window, document=document) ->
       to = @_minLeft if belowMin
 
       # then do slide
-      @slideInner to, true, =>
+      @slide to, true, =>
         triggerEvent()
       @
 
@@ -358,7 +358,7 @@ do ($=jQuery, window=window, document=document) ->
       @disabled = false
       @
 
-    slideInner: (val, animate=false, callback) ->
+    slide: (val, animate=false, callback) ->
 
       val = @_maxLeft if val > @_maxLeft
       val = @_minLeft if val < @_minLeft
@@ -369,9 +369,9 @@ do ($=jQuery, window=window, document=document) ->
       to = { left: val }
 
       $.Deferred (defer) =>
-        @trigger 'touchdragh.beforeinnerslide'
+        @trigger 'touchdragh.beforeslide'
         onDone = =>
-          @trigger 'touchdragh.afterinnerslide'
+          @trigger 'touchdragh.afterslide'
           callback() if callback?
           defer.resolve()
         if animate
@@ -380,6 +380,9 @@ do ($=jQuery, window=window, document=document) ->
           @$inner.stop().css to
           onDone()
       .promise()
+
+    currentSlideLeft: ->
+      ns.getLeftPx @$inner
 
   # ============================================================
   # bridge to plugin
