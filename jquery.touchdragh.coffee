@@ -234,7 +234,7 @@ do ($=jQuery, window=window, document=document) ->
         @el.addEventListener 'click', $.noop , true
       @
       if @options.disableimgdrag
-        @$el.find('img, input[type=image]').on 'dragstart', (e) ->
+        @$el.on 'dragstart', 'img, input[type=image]', (e) ->
           e.preventDefault()
 
     #_handleClick: (event) =>

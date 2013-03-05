@@ -293,7 +293,7 @@
         }
         this;
         if (this.options.disableimgdrag) {
-          return this.$el.find('img, input[type=image]').on('dragstart', function(e) {
+          return this.$el.on('dragstart', 'img, input[type=image]', function(e) {
             return e.preventDefault();
           });
         }
