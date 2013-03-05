@@ -227,9 +227,12 @@
       __extends(TouchdraghEl, _super);
 
       TouchdraghEl.prototype.defaults = {
+        inner: '> *',
         backanim_duration: 250,
         backanim_easing: 'swing',
-        beforefirstrefresh: null
+        beforefirstrefresh: null,
+        triggerrefreshimmediately: true,
+        disableimgdrag: true
       };
 
       function TouchdraghEl($el, options) {
@@ -237,7 +240,6 @@
         this._handleTouchEnd = __bind(this._handleTouchEnd, this);
         this._handleTouchMove = __bind(this._handleTouchMove, this);
         this._handleTouchStart = __bind(this._handleTouchStart, this);
-        this._firstRefreshDone = false;
         this.el = this.$el[0];
         this.options = $.extend({}, this.defaults, options);
         this.disabled = false;
@@ -245,7 +247,9 @@
         this._handlePointerEvents();
         this._prepareEls();
         this._eventify();
-        this.refresh();
+        if (this.options.triggerrefreshimmediately) {
+          this.refresh();
+        }
       }
 
       TouchdraghEl.prototype.refresh = function() {
@@ -256,10 +260,10 @@
           if (this.options.beforefirstrefresh) {
             this.options.beforefirstrefresh(this);
           }
-          this.trigger('touchdragh.firstrefresh');
+          this.trigger('firstrefresh', this);
           this._firstRefreshDone = true;
         }
-        this.trigger('touchdragh.refresh');
+        this.trigger('refresh', this);
         return this;
       };
 
@@ -287,7 +291,12 @@
         if (ns.support.addEventListener) {
           this.el.addEventListener('click', $.noop, true);
         }
-        return this;
+        this;
+        if (this.options.disableimgdrag) {
+          return this.$el.find('img, input[type=image]').on('dragstart', function(e) {
+            return e.preventDefault();
+          });
+        }
       };
 
       TouchdraghEl.prototype._handleTouchStart = function(event) {
@@ -302,21 +311,24 @@
         if (ns.whileGesture) {
           return this;
         }
-        if (event.type === 'mouedown') {
+        if (event.type === 'mousedown') {
           event.preventDefault();
         }
         this._whileDrag = true;
+        this._slidecanceled = false;
         this._shouldSlideInner = false;
         d = this._currentDrag = new ns.OneDrag;
         d.on('yscrolldetected', function() {
-          return _this._whileDrag = false;
+          _this._whileDrag = false;
+          _this._slidecanceled = true;
+          return _this.trigger('slidecancel');
         });
         d.on('xscrolldetected', function() {
           _this._shouldSlideInner = true;
-          return _this.trigger('touchdragh.start');
+          return _this.trigger('dragstart');
         });
         d.on('dragmove', function(data) {
-          _this.trigger('touchdragh.drag');
+          _this.trigger('drag');
           return _this._moveInner(data.x);
         });
         this._innerStartLeft = ns.getLeftPx(this.$inner);
@@ -346,6 +358,9 @@
         $document.off(ns.touchMoveEventName, this._handleTouchMove);
         $document.off(ns.touchEndEventName, this._handleTouchEnd);
         this._currentDrag.destroy();
+        if (!this._slidecanceled) {
+          this.trigger('dragend');
+        }
         this._handleInnerOver(true);
         return this;
       };
@@ -362,7 +377,7 @@
         data = {
           left: left
         };
-        this.trigger('touchdragh.move', data);
+        this.trigger('move', data);
         return this;
       };
 
@@ -377,7 +392,7 @@
         }
         triggerEvent = function() {
           if (invokeEndEvent) {
-            return _this.trigger('touchdragh.end');
+            return _this.trigger('moveend');
           }
         };
         to = null;
@@ -446,10 +461,10 @@
         };
         return $.Deferred(function(defer) {
           var onDone;
-          _this.trigger('touchdragh.beforeslide');
+          _this.trigger('beforeslide');
           onDone = function() {
-            _this.trigger('touchdragh.afterslide');
-            if (callback != null) {
+            _this.trigger('afterslide');
+            if (typeof callback === "function") {
               callback();
             }
             return defer.resolve();
@@ -469,13 +484,171 @@
         return ns.getLeftPx(this.$inner);
       };
 
+      TouchdraghEl.prototype.updateInnerWidth = function(val) {
+        this.$inner.width(val);
+        return this;
+      };
+
       return TouchdraghEl;
 
     })(ns.Event);
-    $.fn.touchdragh = function(options) {
-      if (options == null) {
-        options = {};
+    ns.TouchdraghFitty = (function(_super) {
+
+      __extends(TouchdraghFitty, _super);
+
+      TouchdraghFitty.prototype.defaults = {
+        inner: null,
+        item: null,
+        beforefirstfresh: null,
+        startindex: 0,
+        triggerrefreshimmediately: true
+      };
+
+      function TouchdraghFitty($el, options) {
+        this.$el = $el;
+        this.options = $.extend({}, this.defaults, options);
+        this._currentIndex = this.options.startindex;
+        this._prepareTouchdragh();
+        if (this.options.triggerrefreshimmediately) {
+          this.refresh();
+        }
       }
+
+      TouchdraghFitty.prototype._prepareTouchdragh = function() {
+        var options,
+          _this = this;
+        options = $.extend({}, this.options);
+        options.triggerrefreshimmediately = false;
+        options.beforefirstrefresh = function(touchdragh) {
+          touchdragh.once('firstrefresh', function() {
+            var _base;
+            if (typeof (_base = _this.options).beforefirstrefresh === "function") {
+              _base.beforefirstrefresh(_this);
+            }
+            _this.trigger('firstrefresh', _this);
+            return _this._firstRefreshDone = true;
+          });
+          touchdragh.on('refresh', function() {
+            return _this.trigger('refresh');
+          });
+          touchdragh.on('slidecancel', function() {
+            return _this.trigger('slidecancel');
+          });
+          touchdragh.on('dragstart', function() {
+            return _this.trigger('dragstart');
+          });
+          touchdragh.on('drag', function() {
+            return _this.trigger('drag');
+          });
+          touchdragh.on('dragend', function() {
+            return _this.trigger('dragend');
+          });
+          return touchdragh.on('moveend', function() {
+            var halfOver, index, itemW, slidedDistance;
+            slidedDistance = -touchdragh.currentSlideLeft();
+            itemW = _this.$el.innerWidth();
+            index = Math.floor(slidedDistance / itemW);
+            halfOver = (slidedDistance - (itemW * index)) > (itemW / 2);
+            if (halfOver) {
+              index += 1;
+            }
+            _this.updateIndex(index);
+            return _this.adjustToFit(itemW, true);
+          });
+        };
+        this._touchdragh = new ns.TouchdraghEl(this.$el, options);
+        return this;
+      };
+
+      TouchdraghFitty.prototype.updateIndex = function(index) {
+        if (!((0 <= index && index <= this.$items.length))) {
+          return false;
+        }
+        this._currentIndex = index;
+        return true;
+      };
+
+      TouchdraghFitty.prototype.refresh = function() {
+        var innerW, itemW;
+        this.$items = this.$el.find(this.options.item);
+        itemW = this._itemWidth = this.$el.innerWidth();
+        innerW = itemW * this.$items.length;
+        this._touchdragh.updateInnerWidth(innerW);
+        this.$items.width(itemW);
+        this._touchdragh.refresh();
+        this.adjustToFit(itemW);
+        return this;
+      };
+
+      TouchdraghFitty.prototype.adjustToFit = function(itemWidth, animate, callback) {
+        var _this = this;
+        if (animate == null) {
+          animate = false;
+        }
+        if (itemWidth == null) {
+          itemWidth = this.$items.width();
+        }
+        return $.Deferred(function(defer) {
+          var i, left_after, left_pre;
+          i = _this._currentIndex;
+          left_after = -itemWidth * i;
+          left_pre = _this._touchdragh.currentSlideLeft();
+          if (left_after === left_pre) {
+            defer.resolve();
+            return _this;
+          }
+          if (!_this._sliding) {
+            _this.trigger('slidestart');
+          }
+          _this._sliding = true;
+          return _this._touchdragh.slide(left_after, animate, function() {
+            _this._sliding = false;
+            _this.trigger('slideend');
+            if (typeof callback === "function") {
+              callback();
+            }
+            return defer.resolve();
+          });
+        }).promise();
+      };
+
+      TouchdraghFitty.prototype.to = function(index, animate) {
+        var updated,
+          _this = this;
+        if (animate == null) {
+          animate = false;
+        }
+        updated = this.updateIndex(index);
+        return $.Deferred(function(defer) {
+          if (updated) {
+            return _this.adjustToFit(null, animate, function() {
+              return defer.resolve();
+            });
+          } else {
+            _this.trigger('invalidindexrequested');
+            return defer.resolve();
+          }
+        }).promise();
+      };
+
+      TouchdraghFitty.prototype.next = function(animate) {
+        if (animate == null) {
+          animate = false;
+        }
+        return this.to(this._currentIndex + 1, animate);
+      };
+
+      TouchdraghFitty.prototype.prev = function(animate) {
+        if (animate == null) {
+          animate = false;
+        }
+        return this.to(this._currentIndex - 1, animate);
+      };
+
+      return TouchdraghFitty;
+
+    })(ns.Event);
+    $.fn.touchdragh = function(options) {
       return this.each(function(i, el) {
         var $el, instance;
         $el = $(el);
@@ -484,7 +657,17 @@
         return this;
       });
     };
-    return $.Touchdragh = ns.TouchdraghEl;
+    $.fn.touchdraghfitty = function(options) {
+      return this.each(function(i, el) {
+        var $el, instance;
+        $el = $(el);
+        instance = new ns.TouchdraghFitty($el, options);
+        $el.data('touchdraghfitty', instance);
+        return this;
+      });
+    };
+    $.Touchdragh = ns.TouchdraghEl;
+    return $.TouchdraghFitty = ns.TouchdraghFitty;
   })(jQuery, window, document);
 
 }).call(this);

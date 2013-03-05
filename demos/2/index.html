@@ -1,0 +1,105 @@
+<!doctype html>
+<html class="no-js" lang="ja">
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles.css">
+<script src="../../libs/jquery.js"></script>
+<script src="../../jquery.touchdragh.js"></script>
+<script>
+$(function() {
+
+  var console = window.console || {};
+  console.log = console.log || $.noop;
+
+  var $button1 = $('#button1');
+  var $button2 = $('#button2');
+  var $button3 = $('#button3');
+  var $button4 = $('#button4');
+  var $button5 = $('#button5');
+  var $button6 = $('#button6');
+  var $button7 = $('#button7');
+
+  var eventNames = [
+    'firstrefresh',
+    'dragstart',
+    'drag',
+    'dragend',
+    'refresh',
+    'slidestart',
+    'slideend',
+    'slidecancel',
+    'invalidindexrequested'
+  ];
+
+  $('.box').each(function() {
+
+    var instance;
+
+    var $el = $(this);
+
+    $el.touchdraghfitty({
+      inner: '.box-inner',
+      item: '.item',
+      triggerrefreshimmediately: false,
+      beforefirstrefresh: function(ins) {
+        instance = ins;
+        $.each(eventNames, function(i, ev) {
+          instance.on(ev, function() {
+            console.log(ev);
+          });
+        });
+      }
+    });
+
+    instance = $el.data('touchdraghfitty');
+
+    function update() {
+      instance.refresh();
+      $el.height($el.width());
+    }
+
+    $(window).on('resize', update);
+    update();
+
+    $button1.click(function() { instance.prev(); });
+    $button2.click(function() { instance.next(true); });
+    $button3.click(function() { instance.to(0); });
+    $button4.click(function() { instance.to(0, true); });
+    $button5.click(function() { instance.to(5); });
+    $button6.click(function() { instance.to(5, true); });
+    $button7.click(function() { instance.to(9999); });
+
+  });
+});
+</script>
+</head>
+<body>
+
+<div class="box" id="box1">
+  <div class="box-inner">
+		<div class="item">A</div>
+		<div class="item"><a href="http://example.com">B</a></div>
+		<div class="item"><img src="../imgs/1.jpg" alt=""></div>
+		<div class="item">D</div>
+		<div class="item">E</div>
+		<div class="item">F</div>
+		<div class="item">G</div>
+		<div class="item">H</div>
+		<div class="item">I</div>
+  </div>
+</div>
+
+<div class="buttons">
+  <button id="button1">.prev()</button>
+  <button id="button2">.next(true)</button>
+  <button id="button3">.to(0)</button>
+  <button id="button4">.to(0, true)</button>
+  <button id="button5">.to(5)</button>
+  <button id="button6">.to(5, true)</button>
+  <button id="button7">.to(9999)</button>
+</div>
+
+</body>
+</html>

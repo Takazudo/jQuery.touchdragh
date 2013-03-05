@@ -5,8 +5,8 @@
 <title></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="styles.css">
-<script src="../libs/jquery.js"></script>
-<script src="../jquery.touchdragh.js"></script>
+<script src="../../libs/jquery.js"></script>
+<script src="../../jquery.touchdragh.js"></script>
 <script>
 $(function() {
 
@@ -18,6 +18,17 @@ $(function() {
   var $button3 = $('#button3');
   var $button4 = $('#button4');
 
+  var eventNames = [
+    'dragstart',
+    'drag',
+    'dragend',
+    'refresh',
+    'firstrefresh',
+    'beforeslide',
+    'afterslide',
+    'slidecancel'
+  ];
+
   $('.box').each(function() {
 
     var instance;
@@ -26,20 +37,10 @@ $(function() {
     $el.touchdragh({
       inner: '.box-inner',
       beforefirstrefresh: function(instance) {
-        instance.on('touchdragh.start', function() {
-          console.log('touchdragh.start');
-        }).on('touchdragh.drag', function() {
-          console.log('touchdragh.drag');
-        }).on('touchdragh.end', function() {
-          console.log('touchdragh.end');
-        }).on('touchdragh.refresh', function() {
-          console.log('touchdragh.refresh');
-        }).on('touchdragh.firstrefresh', function() {
-          console.log('touchdragh.firstrefresh');
-        }).on('touchdragh.beforeslide', function() {
-          console.log('touchdragh.beforeslide');
-        }).on('touchdragh.afterslide', function() {
-          console.log('touchdragh.afterslide');
+        $.each(eventNames, function(i, ev) {
+          instance.on(ev, function() {
+            console.log(ev);
+          });
         });
       }
     });
@@ -63,7 +64,7 @@ $(function() {
 
 <div class="box" id="box1">
   <div class="box-inner">
-    THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
+    THE QUICK BROWN FOX <img src="../imgs/1.jpg" alt="" width="60" height="60"> JUMPS OVER THE LAZY DOG.
   </div>
 </div>
 

@@ -182,13 +182,15 @@ do ($=jQuery, window=window, document=document) ->
   class ns.TouchdraghEl extends ns.Event
 
     defaults:
+      inner: '> *' # selector
       backanim_duration: 250
       backanim_easing: 'swing'
-      beforefirstrefresh: null
+      beforefirstrefresh: null # fn
+      triggerrefreshimmediately: true
+      disableimgdrag: true
 
     constructor: (@$el, options) ->
 
-      @_firstRefreshDone = false
       @el = @$el[0]
       @options = $.extend {}, @defaults, options
       @disabled = false
@@ -197,7 +199,7 @@ do ($=jQuery, window=window, document=document) ->
       @_handlePointerEvents()
       @_prepareEls()
       @_eventify()
-      @refresh()
+      @refresh() if @options.triggerrefreshimmediately
 
     refresh: ->
       @_calcMinMaxLeft()
@@ -206,9 +208,9 @@ do ($=jQuery, window=window, document=document) ->
       unless @_firstRefreshDone
         if @options.beforefirstrefresh
           @options.beforefirstrefresh(@)
-        @trigger 'touchdragh.firstrefresh'
+        @trigger 'firstrefresh', @
         @_firstRefreshDone = true
-      @trigger 'touchdragh.refresh'
+      @trigger 'refresh', @
       @
 
     _handlePointerEvents: ->
@@ -231,6 +233,9 @@ do ($=jQuery, window=window, document=document) ->
       if ns.support.addEventListener
         @el.addEventListener 'click', $.noop , true
       @
+      if @options.disableimgdrag
+        @$el.find('img, input[type=image]').on 'dragstart', (e) ->
+          e.preventDefault()
 
     #_handleClick: (event) =>
     #  return @
@@ -247,20 +252,23 @@ do ($=jQuery, window=window, document=document) ->
       return @ if ns.whileGesture
 
       # prevent if mouseclick
-      event.preventDefault() if event.type is 'mouedown'
+      event.preventDefault() if event.type is 'mousedown'
 
       @_whileDrag = true
+      @_slidecanceled = false
       @_shouldSlideInner = false
 
       # handle drag via OneDrag class
       d = @_currentDrag = new ns.OneDrag
       d.on 'yscrolldetected', =>
         @_whileDrag = false
+        @_slidecanceled = true
+        @trigger 'slidecancel'
       d.on 'xscrolldetected', =>
         @_shouldSlideInner = true
-        @trigger 'touchdragh.start'
+        @trigger 'dragstart'
       d.on 'dragmove', (data) =>
-        @trigger 'touchdragh.drag'
+        @trigger 'drag'
         @_moveInner data.x
 
       @_innerStartLeft = ns.getLeftPx @$inner
@@ -292,6 +300,7 @@ do ($=jQuery, window=window, document=document) ->
       $document.off ns.touchEndEventName, @_handleTouchEnd
 
       @_currentDrag.destroy()
+      @trigger 'dragend' unless @_slidecanceled
 
       # if inner was over, fit it to inside.
       @_handleInnerOver true
@@ -308,7 +317,7 @@ do ($=jQuery, window=window, document=document) ->
 
       @$inner.css 'left', left
       data = { left: left }
-      @trigger 'touchdragh.move', data
+      @trigger 'move', data
       @
 
     _handleInnerOver: (invokeEndEvent = false) ->
@@ -316,7 +325,7 @@ do ($=jQuery, window=window, document=document) ->
       return @ if @isInnerTooNarrow()
 
       triggerEvent = =>
-        @trigger 'touchdragh.end' if invokeEndEvent
+        @trigger 'moveend' if invokeEndEvent
       to = null
 
       left = @currentSlideLeft()
@@ -369,10 +378,10 @@ do ($=jQuery, window=window, document=document) ->
       to = { left: val }
 
       $.Deferred (defer) =>
-        @trigger 'touchdragh.beforeslide'
+        @trigger 'beforeslide'
         onDone = =>
-          @trigger 'touchdragh.afterslide'
-          callback() if callback?
+          @trigger 'afterslide'
+          callback?()
           defer.resolve()
         if animate
           @$inner.stop().animate to, d, e, => onDone()
@@ -384,15 +393,127 @@ do ($=jQuery, window=window, document=document) ->
     currentSlideLeft: ->
       ns.getLeftPx @$inner
 
+    updateInnerWidth: (val) ->
+      @$inner.width val
+      @
+
+  # ============================================================
+  # TouchdraghFitty
+
+  class ns.TouchdraghFitty extends ns.Event
+    
+    defaults:
+      inner: null # selector
+      item: null # selector
+      beforefirstfresh: null # fn
+      startindex: 0
+      triggerrefreshimmediately: true
+
+    constructor: (@$el, options) ->
+      @options = $.extend {}, @defaults, options
+      @_currentIndex = @options.startindex
+      @_prepareTouchdragh()
+      @refresh() if @options.triggerrefreshimmediately
+    
+    _prepareTouchdragh: ->
+    
+      options = $.extend {}, @options
+      options.triggerrefreshimmediately = false
+
+      options.beforefirstrefresh = (touchdragh) =>
+
+        touchdragh.once 'firstrefresh', =>
+          @options.beforefirstrefresh?(@)
+          @trigger 'firstrefresh', @
+          @_firstRefreshDone = true
+
+        touchdragh.on 'refresh', => @trigger 'refresh'
+        touchdragh.on 'slidecancel', => @trigger 'slidecancel'
+        touchdragh.on 'dragstart', => @trigger 'dragstart'
+        touchdragh.on 'drag', => @trigger 'drag'
+        touchdragh.on 'dragend', => @trigger 'dragend'
+
+        touchdragh.on 'moveend', =>
+          slidedDistance = -touchdragh.currentSlideLeft()
+          itemW = @$el.innerWidth()
+          index = Math.floor (slidedDistance / itemW)
+          halfOver = (slidedDistance - (itemW * index)) > (itemW / 2)
+          if halfOver
+            index += 1
+          @updateIndex index
+          @adjustToFit itemW, true
+
+      @_touchdragh = new ns.TouchdraghEl @$el, options
+      @
+
+    updateIndex: (index) ->
+      unless 0 <= index <= @$items.length
+        return false
+      @_currentIndex = index
+      true
+
+    refresh: ->
+      @$items = @$el.find @options.item
+      itemW = @_itemWidth = @$el.innerWidth()
+      innerW = (itemW * @$items.length)
+      @_touchdragh.updateInnerWidth innerW
+      @$items.width itemW
+      @_touchdragh.refresh()
+      @adjustToFit itemW
+      @
+
+    adjustToFit: (itemWidth, animate=false, callback) ->
+      itemWidth = @$items.width() unless itemWidth?
+      $.Deferred (defer) =>
+        i = @_currentIndex
+        left_after = -itemWidth * i
+        left_pre = @_touchdragh.currentSlideLeft()
+        if left_after is left_pre
+          defer.resolve()
+          return @
+        @trigger 'slidestart' unless @_sliding
+        @_sliding = true
+        @_touchdragh.slide left_after, animate, =>
+          @_sliding = false
+          @trigger 'slideend'
+          callback?()
+          defer.resolve()
+      .promise()
+
+    to: (index, animate=false) ->
+      updated = @updateIndex (index)
+      $.Deferred (defer) =>
+        if updated
+          @adjustToFit null, animate, => defer.resolve()
+        else
+          @trigger 'invalidindexrequested'
+          defer.resolve()
+      .promise()
+
+    next: (animate=false) ->
+      @to (@_currentIndex + 1), animate
+
+    prev: (animate=false) ->
+      @to (@_currentIndex - 1), animate
+    
+
   # ============================================================
   # bridge to plugin
 
-  $.fn.touchdragh = (options = {}) ->
+  $.fn.touchdragh = (options) ->
     @each (i, el) ->
       $el = $(el)
       instance = new ns.TouchdraghEl $el, options
       $el.data 'touchdragh', instance
       @
 
+  $.fn.touchdraghfitty = (options) ->
+    @each (i, el) ->
+      $el = $(el)
+      instance = new ns.TouchdraghFitty $el, options
+      $el.data 'touchdraghfitty', instance
+      @
+
   $.Touchdragh = ns.TouchdraghEl
+  $.TouchdraghFitty = ns.TouchdraghFitty
 
