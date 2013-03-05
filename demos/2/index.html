@@ -50,6 +50,9 @@ $(function() {
             console.log(ev);
           });
         });
+        instance.on('indexchange', function(data) {
+          console.log('indexchange: ' + data.index);
+        });
       }
     });
 

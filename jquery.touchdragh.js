@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-03-05
+ * lastupdate: 2013-03-06
  * version: 0.0.0
  * author: Takeshi Takatsudo 'Takazudo' <takazudo@gmail.com>
  * License: MIT */
@@ -507,7 +507,7 @@
       function TouchdraghFitty($el, options) {
         this.$el = $el;
         this.options = $.extend({}, this.defaults, options);
-        this._currentIndex = this.options.startindex;
+        this.currentIndex = this.options.startindex;
         this._prepareTouchdragh();
         if (this.options.triggerrefreshimmediately) {
           this.refresh();
@@ -561,10 +561,18 @@
       };
 
       TouchdraghFitty.prototype.updateIndex = function(index) {
+        var data, lastIndex;
         if (!((0 <= index && index <= this.$items.length))) {
           return false;
         }
-        this._currentIndex = index;
+        lastIndex = this.currentIndex;
+        this.currentIndex = index;
+        if (lastIndex !== index) {
+          data = {
+            index: this.currentIndex
+          };
+          this.trigger('indexchange', data);
+        }
         return true;
       };
 
@@ -590,7 +598,7 @@
         }
         return $.Deferred(function(defer) {
           var i, left_after, left_pre;
-          i = _this._currentIndex;
+          i = _this.currentIndex;
           left_after = -itemWidth * i;
           left_pre = _this._touchdragh.currentSlideLeft();
           if (left_after === left_pre) {
@@ -602,8 +610,12 @@
           }
           _this._sliding = true;
           return _this._touchdragh.slide(left_after, animate, function() {
+            var data;
             _this._sliding = false;
-            _this.trigger('slideend');
+            data = {
+              index: _this.currentIndex
+            };
+            _this.trigger('slideend', data);
             if (typeof callback === "function") {
               callback();
             }
@@ -635,14 +647,14 @@
         if (animate == null) {
           animate = false;
         }
-        return this.to(this._currentIndex + 1, animate);
+        return this.to(this.currentIndex + 1, animate);
       };
 
       TouchdraghFitty.prototype.prev = function(animate) {
         if (animate == null) {
           animate = false;
         }
-        return this.to(this._currentIndex - 1, animate);
+        return this.to(this.currentIndex - 1, animate);
       };
 
       return TouchdraghFitty;

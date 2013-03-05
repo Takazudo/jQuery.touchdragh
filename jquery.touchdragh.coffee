@@ -411,7 +411,7 @@ do ($=jQuery, window=window, document=document) ->
 
     constructor: (@$el, options) ->
       @options = $.extend {}, @defaults, options
-      @_currentIndex = @options.startindex
+      @currentIndex = @options.startindex
       @_prepareTouchdragh()
       @refresh() if @options.triggerrefreshimmediately
     
@@ -442,14 +442,18 @@ do ($=jQuery, window=window, document=document) ->
             index += 1
           @updateIndex index
           @adjustToFit itemW, true
-
       @_touchdragh = new ns.TouchdraghEl @$el, options
       @
-
+      
     updateIndex: (index) ->
       unless 0 <= index <= @$items.length
         return false
-      @_currentIndex = index
+      lastIndex = @currentIndex
+      @currentIndex = index
+      if lastIndex isnt index
+        data =
+          index: @currentIndex
+        @trigger 'indexchange', data
       true
 
     refresh: ->
@@ -465,7 +469,7 @@ do ($=jQuery, window=window, document=document) ->
     adjustToFit: (itemWidth, animate=false, callback) ->
       itemWidth = @$items.width() unless itemWidth?
       $.Deferred (defer) =>
-        i = @_currentIndex
+        i = @currentIndex
         left_after = -itemWidth * i
         left_pre = @_touchdragh.currentSlideLeft()
         if left_after is left_pre
@@ -475,7 +479,9 @@ do ($=jQuery, window=window, document=document) ->
         @_sliding = true
         @_touchdragh.slide left_after, animate, =>
           @_sliding = false
-          @trigger 'slideend'
+          data =
+            index: @currentIndex
+          @trigger 'slideend', data
           callback?()
           defer.resolve()
       .promise()
@@ -491,10 +497,10 @@ do ($=jQuery, window=window, document=document) ->
       .promise()
 
     next: (animate=false) ->
-      @to (@_currentIndex + 1), animate
+      @to (@currentIndex + 1), animate
 
     prev: (animate=false) ->
-      @to (@_currentIndex - 1), animate
+      @to (@currentIndex - 1), animate
     
 
   # ============================================================
