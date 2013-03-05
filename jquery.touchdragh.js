@@ -562,7 +562,7 @@
 
       TouchdraghFitty.prototype.updateIndex = function(index) {
         var data, lastIndex;
-        if (!((0 <= index && index <= this.$items.length))) {
+        if (!((0 <= index && index < this.$items.length))) {
           return false;
         }
         lastIndex = this.currentIndex;

@@ -446,7 +446,7 @@ do ($=jQuery, window=window, document=document) ->
       @
       
     updateIndex: (index) ->
-      unless 0 <= index <= @$items.length
+      unless 0 <= index < @$items.length
         return false
       lastIndex = @currentIndex
       @currentIndex = index
