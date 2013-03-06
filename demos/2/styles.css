@@ -2,6 +2,9 @@
   margin:0;
   padding:0;
 }
+a {
+  color:#00f;
+}
 button {
   padding:4px;
 }

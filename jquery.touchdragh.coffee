@@ -232,7 +232,6 @@ do ($=jQuery, window=window, document=document) ->
       @
 
     _eventify: ->
-      #@$el.on 'click', @_handleClick
       @$el.on ns.touchStartEventName, @_handleTouchStart
       if ns.support.addEventListener
         @el.addEventListener 'click', $.noop , true
@@ -241,11 +240,10 @@ do ($=jQuery, window=window, document=document) ->
         @$el.on 'dragstart', 'img, input[type=image]', (e) ->
           e.preventDefault()
 
-    #_handleClick: (event) =>
-    #  return @
-    #  event.stopPropagation()
-    #  event.preventDefault()
-    #  @
+    _handleClickToIgnore: (event) =>
+      event.stopPropagation()
+      event.preventDefault()
+      @
 
     _handleTouchStart: (event) =>
 
@@ -271,6 +269,8 @@ do ($=jQuery, window=window, document=document) ->
       d.on 'xscrolldetected', =>
         @_shouldSlideInner = true
         @trigger 'dragstart'
+        # ignore click if drag
+        @$el.on 'click', 'a', @_handleClickToIgnore
       d.on 'dragmove', (data) =>
         @trigger 'drag'
         @_moveInner data.x
@@ -305,6 +305,11 @@ do ($=jQuery, window=window, document=document) ->
 
       @_currentDrag.destroy()
       @trigger 'dragend' unless @_slidecanceled
+
+      # enable click again
+      setTimeout =>
+        @$el.off 'click', 'a', @_handleClickToIgnore
+      , 10
 
       # if inner was over, fit it to inside.
       @_handleInnerOver true

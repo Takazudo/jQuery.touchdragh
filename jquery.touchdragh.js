@@ -241,6 +241,7 @@
         this._handleTouchEnd = __bind(this._handleTouchEnd, this);
         this._handleTouchMove = __bind(this._handleTouchMove, this);
         this._handleTouchStart = __bind(this._handleTouchStart, this);
+        this._handleClickToIgnore = __bind(this._handleClickToIgnore, this);
         this.el = this.$el[0];
         this.options = $.extend({}, this.defaults, options);
         this.disabled = false;
@@ -305,6 +306,12 @@
         }
       };
 
+      TouchdraghEl.prototype._handleClickToIgnore = function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        return this;
+      };
+
       TouchdraghEl.prototype._handleTouchStart = function(event) {
         var d,
           _this = this;
@@ -331,7 +338,8 @@
         });
         d.on('xscrolldetected', function() {
           _this._shouldSlideInner = true;
-          return _this.trigger('dragstart');
+          _this.trigger('dragstart');
+          return _this.$el.on('click', 'a', _this._handleClickToIgnore);
         });
         d.on('dragmove', function(data) {
           _this.trigger('drag');
@@ -360,6 +368,7 @@
       };
 
       TouchdraghEl.prototype._handleTouchEnd = function(event) {
+        var _this = this;
         this._whileDrag = false;
         $document.off(ns.touchMoveEventName, this._handleTouchMove);
         $document.off(ns.touchEndEventName, this._handleTouchEnd);
@@ -367,6 +376,9 @@
         if (!this._slidecanceled) {
           this.trigger('dragend');
         }
+        setTimeout(function() {
+          return _this.$el.off('click', 'a', _this._handleClickToIgnore);
+        }, 10);
         this._handleInnerOver(true);
         return this;
       };
