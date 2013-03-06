@@ -1,6 +1,5 @@
 module.exports = (grunt) ->
   
-  utils = (require './gruntcomponents/misc/commonutils')(grunt)
   grunt.task.loadTasks 'gruntcomponents/tasks'
   grunt.task.loadNpmTasks 'grunt-contrib-coffee'
   grunt.task.loadNpmTasks 'grunt-contrib-watch'
@@ -54,10 +53,6 @@ module.exports = (grunt) ->
         tasks: [
           'default'
         ]
-
-
-  grunt.event.on 'coffee.error', (msg) ->
-    utils.growl 'ERROR!!', msg
 
   grunt.registerTask 'default', [
     'coffee'
