@@ -188,6 +188,7 @@ do ($=jQuery, window=window, document=document) ->
       beforefirstrefresh: null # fn
       triggerrefreshimmediately: true
       disableimgdrag: true
+      tweakinnerpositionstyle: false
 
     constructor: (@$el, options) ->
 
@@ -220,6 +221,9 @@ do ($=jQuery, window=window, document=document) ->
 
     _prepareEls: ->
       @$inner = @$el.find @options.inner
+      if @options.tweakinnerpositionstyle
+        @$inner.css
+          position: 'relative'
       @
     
     _calcMinMaxLeft: ->
@@ -403,7 +407,6 @@ do ($=jQuery, window=window, document=document) ->
   class ns.TouchdraghFitty extends ns.Event
     
     defaults:
-      inner: null # selector
       item: null # selector
       beforefirstfresh: null # fn
       startindex: 0

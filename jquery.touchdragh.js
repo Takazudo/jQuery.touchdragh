@@ -232,7 +232,8 @@
         backanim_easing: 'swing',
         beforefirstrefresh: null,
         triggerrefreshimmediately: true,
-        disableimgdrag: true
+        disableimgdrag: true,
+        tweakinnerpositionstyle: false
       };
 
       function TouchdraghEl($el, options) {
@@ -277,6 +278,11 @@
 
       TouchdraghEl.prototype._prepareEls = function() {
         this.$inner = this.$el.find(this.options.inner);
+        if (this.options.tweakinnerpositionstyle) {
+          this.$inner.css({
+            position: 'relative'
+          });
+        }
         return this;
       };
 
@@ -497,7 +503,6 @@
       __extends(TouchdraghFitty, _super);
 
       TouchdraghFitty.prototype.defaults = {
-        inner: null,
         item: null,
         beforefirstfresh: null,
         startindex: 0,
