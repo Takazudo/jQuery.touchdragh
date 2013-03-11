@@ -573,16 +573,20 @@
             return _this.trigger('dragend');
           });
           return touchdragh.on('moveend', function() {
-            var halfOver, index, itemW, slidedDistance;
+            var caliculatedIndex, itemW, nextIndex, slidedDistance;
             slidedDistance = -touchdragh.currentSlideLeft();
             itemW = _this.$el.innerWidth();
-            index = Math.floor(slidedDistance / itemW);
-            halfOver = (slidedDistance - (itemW * index)) > (itemW / 2);
-            if (halfOver) {
-              index += 1;
+            nextIndex = null;
+            caliculatedIndex = slidedDistance / itemW;
+            if (caliculatedIndex < _this.currentIndex) {
+              nextIndex = _this.currentIndex - 1;
+            } else if (caliculatedIndex > _this.currentIndex) {
+              nextIndex = _this.currentIndex + 1;
             }
-            _this.updateIndex(index);
-            return _this.adjustToFit(itemW, true);
+            if (nextIndex !== null) {
+              _this.updateIndex(nextIndex);
+              return _this.adjustToFit(itemW, true);
+            }
           });
         };
         this._touchdragh = new ns.TouchdraghEl(this.$el, options);

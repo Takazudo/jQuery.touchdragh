@@ -453,12 +453,15 @@ do ($=jQuery, window=window, document=document) ->
         touchdragh.on 'moveend', =>
           slidedDistance = -touchdragh.currentSlideLeft()
           itemW = @$el.innerWidth()
-          index = Math.floor (slidedDistance / itemW)
-          halfOver = (slidedDistance - (itemW * index)) > (itemW / 2)
-          if halfOver
-            index += 1
-          @updateIndex index
-          @adjustToFit itemW, true
+          nextIndex = null
+          caliculatedIndex = slidedDistance / itemW
+          if caliculatedIndex < @currentIndex
+            nextIndex = @currentIndex - 1
+          else if caliculatedIndex > @currentIndex
+            nextIndex = @currentIndex + 1
+          unless nextIndex is null
+            @updateIndex nextIndex
+            @adjustToFit itemW, true
       @_touchdragh = new ns.TouchdraghEl @$el, options
       @
       
