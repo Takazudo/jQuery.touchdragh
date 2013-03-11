@@ -40,25 +40,34 @@ do ($=jQuery, window=window, document=document) ->
   ns.support.mspointer = window.navigator.msPointerEnabled or false
 
   # http://msdn.microsoft.com/en-us/library/ie/hh920767(v=vs.85).aspx
-  ns.ua.win8 = /Windows NT 6\.2/i.test navigator.userAgent
+  ns.ua.win8orhigh = do ->
+    # windows browsers has str like "Windows NT 6.2" in its UA
+    # Win8 UAs' version is "6.2"
+    # browsers above this version may has touch events.
+    ua = navigator.userAgent
+    matched = ua.match(/Windows NT ([\d\.]+)/)
+    return false unless matched
+    version = matched[1] * 1
+    return false if version < 6.2
+    true
 
   # for win8 modern browsers, we need to bind both events
   
   ns.touchStartEventName = do ->
     return 'MSPointerDown' if ns.support.mspointer
-    return 'touchstart mousedown' if ns.ua.win8
+    return 'touchstart mousedown' if ns.ua.win8orhigh
     return 'touchstart' if ns.support.touch
     'mousedown'
 
   ns.touchMoveEventName = do ->
     return 'MSPointerMove' if ns.support.mspointer
-    return 'touchmove mousemove' if ns.ua.win8
+    return 'touchmove mousemove' if ns.ua.win8orhigh
     return 'touchmove' if ns.support.touch
     'mousemove'
 
   ns.touchEndEventName = do ->
     return 'MSPointerUp' if ns.support.mspointer
-    return 'touchend mouseup' if ns.ua.win8
+    return 'touchend mouseup' if ns.ua.win8orhigh
     return 'touchend' if ns.support.touch
     'mouseup'
 

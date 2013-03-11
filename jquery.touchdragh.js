@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-03-06
+ * lastupdate: 2013-03-11
  * version: 0.0.0
  * author: Takeshi Takatsudo 'Takazudo' <takazudo@gmail.com>
  * License: MIT */
@@ -32,12 +32,24 @@
     ns.support.addEventListener = 'addEventListener' in document;
     ns.support.touch = 'ontouchend' in document;
     ns.support.mspointer = window.navigator.msPointerEnabled || false;
-    ns.ua.win8 = /Windows NT 6\.2/i.test(navigator.userAgent);
+    ns.ua.win8orhigh = (function() {
+      var matched, ua, version;
+      ua = navigator.userAgent;
+      matched = ua.match(/Windows NT ([\d\.]+)/);
+      if (!matched) {
+        return false;
+      }
+      version = matched[1] * 1;
+      if (version < 6.2) {
+        return false;
+      }
+      return true;
+    })();
     ns.touchStartEventName = (function() {
       if (ns.support.mspointer) {
         return 'MSPointerDown';
       }
-      if (ns.ua.win8) {
+      if (ns.ua.win8orhigh) {
         return 'touchstart mousedown';
       }
       if (ns.support.touch) {
@@ -49,7 +61,7 @@
       if (ns.support.mspointer) {
         return 'MSPointerMove';
       }
-      if (ns.ua.win8) {
+      if (ns.ua.win8orhigh) {
         return 'touchmove mousemove';
       }
       if (ns.support.touch) {
@@ -61,7 +73,7 @@
       if (ns.support.mspointer) {
         return 'MSPointerUp';
       }
-      if (ns.ua.win8) {
+      if (ns.ua.win8orhigh) {
         return 'touchend mouseup';
       }
       if (ns.support.touch) {
