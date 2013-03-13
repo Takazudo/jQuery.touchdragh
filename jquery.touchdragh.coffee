@@ -196,7 +196,6 @@ do ($=jQuery, window=window, document=document) ->
       backanim_easing: 'swing'
       beforefirstrefresh: null # fn
       triggerrefreshimmediately: true
-      disableimgdrag: true
       tweakinnerpositionstyle: false
 
     constructor: (@$el, options) ->
@@ -245,9 +244,6 @@ do ($=jQuery, window=window, document=document) ->
       if ns.support.addEventListener
         @el.addEventListener 'click', $.noop , true
       @
-      if @options.disableimgdrag
-        @$el.on 'dragstart', 'img, input[type=image]', (e) ->
-          e.preventDefault()
 
     _handleClickToIgnore: (event) =>
       event.stopPropagation()

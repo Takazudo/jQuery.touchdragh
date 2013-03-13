@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-03-11
+ * lastupdate: 2013-03-13
  * version: 0.0.0
  * author: Takeshi Takatsudo 'Takazudo' <takazudo@gmail.com>
  * License: MIT */
@@ -244,7 +244,6 @@
         backanim_easing: 'swing',
         beforefirstrefresh: null,
         triggerrefreshimmediately: true,
-        disableimgdrag: true,
         tweakinnerpositionstyle: false
       };
 
@@ -310,12 +309,7 @@
         if (ns.support.addEventListener) {
           this.el.addEventListener('click', $.noop, true);
         }
-        this;
-        if (this.options.disableimgdrag) {
-          return this.$el.on('dragstart', 'img, input[type=image]', function(e) {
-            return e.preventDefault();
-          });
-        }
+        return this;
       };
 
       TouchdraghEl.prototype._handleClickToIgnore = function(event) {
