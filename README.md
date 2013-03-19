@@ -6,7 +6,7 @@ drag element by touch
 
 ## Required
 
-jQuery 1.9.1
+jQuery 1.9.1 (>= 1.7)
 
 ## License
 
