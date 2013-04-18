@@ -1,7 +1,7 @@
 {
   "name": "jQuery.touchdragh",
-  "version": "0.0.0",
-  "author": "Takeshi Takatsudo 'Takazudo' <takazudo@gmail.com>",
+  "version": "1.0.0",
+  "author": "'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/Takazudo/jQuery.touchdragh"

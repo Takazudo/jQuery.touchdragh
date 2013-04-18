@@ -1,7 +1,7 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
  * lastupdate: 2013-04-18
- * version: 0.0.0
- * author: Takeshi Takatsudo 'Takazudo' <takazudo@gmail.com>
+ * version: 1.0.0
+ * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
 (function() {
   var __slice = [].slice,
