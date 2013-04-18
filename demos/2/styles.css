@@ -30,7 +30,8 @@ body {
 }
 .box,
 .box * {
-  -webkit-transform:translateZ(0);
+  -webkit-touch-callout: none;
+  touch-callout: none;
 }
   .box-inner {
     position:absolute;

@@ -27,7 +27,7 @@ body {
 }
 .box,
 .box * {
-  -webkit-transform:translateZ(0);
+  -webkit-transform:translateZ(0); /* This may bring speed up. remove this if you got bugged */
 }
   .box-inner {
     position:absolute;
