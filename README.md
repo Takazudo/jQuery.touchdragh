@@ -32,3 +32,9 @@ A: No. This uses just "left" style. I know those are faster but buggy especially
 MIT
 
 User at your own risk.
+
+## Special thanks
+
+[Hokaccha](https://github.com/hokaccha)'s [flipsnap](https://github.com/pxgrid/js-flipsnap/) helps me so much. Thanks.
+
+
