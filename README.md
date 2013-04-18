@@ -1,6 +1,7 @@
-# jQuery.touchdrag
+# jQuery.touchdragh
 
-This makes elements draggable horizontally by touch.
+This makes elements draggable horizontally by touch.  
+Vertical version is [here](https://github.com/Takazudo/jQuery.touchdragv).
 
 ## Usage
 
