@@ -2,6 +2,10 @@
 
 This makes elements draggable horizontally by touch.
 
+## Usage
+
+See demos.
+
 ## Demos
 
 * [http://takazudo.github.io/jQuery.touchdragh/demos/1/](http://takazudo.github.io/jQuery.touchdragh/demos/1/)
