@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-03-13
+ * lastupdate: 2013-04-18
  * version: 0.0.0
  * author: Takeshi Takatsudo 'Takazudo' <takazudo@gmail.com>
  * License: MIT */
@@ -45,42 +45,28 @@
       }
       return true;
     })();
-    ns.touchStartEventName = (function() {
-      if (ns.support.mspointer) {
-        return 'MSPointerDown';
+    ns.getEventNameSet = function(eventName) {
+      var res;
+      res = {};
+      switch (eventName) {
+        case 'touchstart':
+          res.move = 'touchmove';
+          res.end = 'touchend';
+          break;
+        case 'mousedown':
+          res.move = 'mousemove';
+          res.end = 'mouseup';
+          break;
+        case 'MSPointerDown':
+          res.move = 'MSPointerMove';
+          res.end = 'MSPointerUp';
+          break;
+        case 'pointerdown':
+          res.move = 'pointermove';
+          res.end = 'pointerup';
       }
-      if (ns.ua.win8orhigh) {
-        return 'touchstart mousedown';
-      }
-      if (ns.support.touch) {
-        return 'touchstart';
-      }
-      return 'mousedown';
-    })();
-    ns.touchMoveEventName = (function() {
-      if (ns.support.mspointer) {
-        return 'MSPointerMove';
-      }
-      if (ns.ua.win8orhigh) {
-        return 'touchmove mousemove';
-      }
-      if (ns.support.touch) {
-        return 'touchmove';
-      }
-      return 'mousemove';
-    })();
-    ns.touchEndEventName = (function() {
-      if (ns.support.mspointer) {
-        return 'MSPointerUp';
-      }
-      if (ns.ua.win8orhigh) {
-        return 'touchend mouseup';
-      }
-      if (ns.support.touch) {
-        return 'touchend';
-      }
-      return 'mouseup';
-    })();
+      return res;
+    };
     ns.getLeftPx = function($el) {
       var l;
       l = $el.css('left');
@@ -129,10 +115,11 @@
       };
 
       Event.prototype.once = function(ev, callback) {
-        return this.on(ev, function() {
+        this.on(ev, function() {
           this.off(ev, arguments.callee);
           return callback.apply(this, arguments);
         });
+        return this;
       };
 
       Event.prototype.trigger = function() {
@@ -305,7 +292,9 @@
       };
 
       TouchdraghEl.prototype._eventify = function() {
-        this.$el.on(ns.touchStartEventName, this._handleTouchStart);
+        var eventNames;
+        eventNames = 'pointerdown MSPointerDown touchstart mousedown';
+        this.$el.on(eventNames, this._handleTouchStart);
         if (ns.support.addEventListener) {
           this.el.addEventListener('click', $.noop, true);
         }
@@ -333,6 +322,7 @@
         if (event.type === 'mousedown') {
           event.preventDefault();
         }
+        this._currentEventNameSet = ns.getEventNameSet(event.type);
         this._whileDrag = true;
         this._slidecanceled = false;
         this._shouldSlideInner = false;
@@ -353,8 +343,8 @@
         });
         this._innerStartLeft = ns.getLeftPx(this.$inner);
         d.applyTouchStart(event);
-        $document.on(ns.touchMoveEventName, this._handleTouchMove);
-        $document.on(ns.touchEndEventName, this._handleTouchEnd);
+        $document.on(this._currentEventNameSet.move, this._handleTouchMove);
+        $document.on(this._currentEventNameSet.end, this._handleTouchEnd);
         return this;
       };
 
@@ -376,9 +366,10 @@
       TouchdraghEl.prototype._handleTouchEnd = function(event) {
         var _this = this;
         this._whileDrag = false;
-        $document.off(ns.touchMoveEventName, this._handleTouchMove);
-        $document.off(ns.touchEndEventName, this._handleTouchEnd);
+        $document.off(this._currentEventNameSet.move, this._handleTouchMove);
+        $document.off(this._currentEventNameSet.end, this._handleTouchEnd);
         this._currentDrag.destroy();
+        this._currentEventNameSet = null;
         if (!this._slidecanceled) {
           this.trigger('dragend');
         }
@@ -693,7 +684,6 @@
         $el = $(el);
         instance = new ns.TouchdraghEl($el, options);
         $el.data('touchdragh', instance);
-        return this;
       });
     };
     $.fn.touchdraghfitty = function(options) {
@@ -702,7 +692,6 @@
         $el = $(el);
         instance = new ns.TouchdraghFitty($el, options);
         $el.data('touchdraghfitty', instance);
-        return this;
       });
     };
     $.Touchdragh = ns.TouchdraghEl;

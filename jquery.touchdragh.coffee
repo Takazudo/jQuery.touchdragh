@@ -23,7 +23,7 @@ do ($=jQuery, window=window, document=document) ->
       res.x = event.pageX or orig.pageX
       res.y = event.pageY or orig.pageY
 
-    res
+    return res
 
   # ============================================================
   # detect / normalize event names
@@ -49,28 +49,26 @@ do ($=jQuery, window=window, document=document) ->
     return false unless matched
     version = matched[1] * 1
     return false if version < 6.2
-    true
+    return true
 
-  # for win8 modern browsers, we need to bind both events
+  # returns related eventNameSet
+  ns.getEventNameSet = (eventName) ->
+    res = {}
+    switch eventName
+      when 'touchstart'
+        res.move = 'touchmove'
+        res.end = 'touchend'
+      when 'mousedown'
+        res.move = 'mousemove'
+        res.end = 'mouseup'
+      when 'MSPointerDown'
+        res.move = 'MSPointerMove'
+        res.end = 'MSPointerUp'
+      when 'pointerdown'
+        res.move = 'pointermove'
+        res.end = 'pointerup'
+    return res
   
-  ns.touchStartEventName = do ->
-    return 'MSPointerDown' if ns.support.mspointer
-    return 'touchstart mousedown' if ns.ua.win8orhigh
-    return 'touchstart' if ns.support.touch
-    'mousedown'
-
-  ns.touchMoveEventName = do ->
-    return 'MSPointerMove' if ns.support.mspointer
-    return 'touchmove mousemove' if ns.ua.win8orhigh
-    return 'touchmove' if ns.support.touch
-    'mousemove'
-
-  ns.touchEndEventName = do ->
-    return 'MSPointerUp' if ns.support.mspointer
-    return 'touchend mouseup' if ns.ua.win8orhigh
-    return 'touchend' if ns.support.touch
-    'mouseup'
-
   # ============================================================
   # left value getter
 
@@ -80,7 +78,7 @@ do ($=jQuery, window=window, document=document) ->
       l = 0
     else
       l = (l.replace /px/, '') * 1
-    l
+    return l
 
   # ============================================================
   # gesture handler
@@ -108,12 +106,13 @@ do ($=jQuery, window=window, document=document) ->
       for name in evs
         @_callbacks[name] or= []
         @_callbacks[name].push(callback)
-      @
+      return this
 
     once: (ev, callback) ->
       @on ev, ->
         @off(ev, arguments.callee)
         callback.apply(@, arguments)
+      return this
 
     trigger: (args...) ->
       ev = args.shift()
@@ -122,12 +121,12 @@ do ($=jQuery, window=window, document=document) ->
       for callback in list
         if callback.apply(@, args) is false
           break
-      @
+      return this
 
     off: (ev, callback) ->
       unless ev
         @_callbacks = {}
-        return @
+        return this
 
       list = @_callbacks?[ev]
       return this unless list
@@ -141,7 +140,8 @@ do ($=jQuery, window=window, document=document) ->
         list.splice(i, 1)
         @_callbacks[ev] = list
         break
-      @
+
+      return this
 
   # ============================================================
   # OneDrag
@@ -155,10 +155,10 @@ do ($=jQuery, window=window, document=document) ->
     applyTouchStart: (touchStartEvent) ->
 
       coords = ns.normalizeXY touchStartEvent
-
       @startPageX = coords.x
       @startPageY = coords.y
-      @
+
+      return this
 
     applyTouchMove: (touchMoveEvent) ->
 
@@ -179,11 +179,11 @@ do ($=jQuery, window=window, document=document) ->
             @trigger 'xscrolldetected'
           else if distY > 5
             @trigger 'yscrolldetected'
-      @
+      return this
 
     destroy: ->
       @off()
-      @
+      return this
 
   # ============================================================
   # TouchdraghEl
@@ -220,46 +220,50 @@ do ($=jQuery, window=window, document=document) ->
         @trigger 'firstrefresh', @
         @_firstRefreshDone = true
       @trigger 'refresh', @
-      @
+      return this
 
     _handlePointerEvents: ->
       return @ unless ns.support.mspointer
       @el.style.msTouchAction = 'none'
-      @
+      return this
 
     _prepareEls: ->
       @$inner = @$el.find @options.inner
       if @options.tweakinnerpositionstyle
         @$inner.css
           position: 'relative'
-      @
+      return this
     
     _calcMinMaxLeft: ->
       @_maxLeft = 0
       @_minLeft = -(@$inner.outerWidth() - @$el.innerWidth())
-      @
+      return this
 
     _eventify: ->
-      @$el.on ns.touchStartEventName, @_handleTouchStart
+      eventNames = 'pointerdown MSPointerDown touchstart mousedown'
+      @$el.on eventNames, @_handleTouchStart
       if ns.support.addEventListener
         @el.addEventListener 'click', $.noop , true
-      @
+      return this
 
     _handleClickToIgnore: (event) =>
       event.stopPropagation()
       event.preventDefault()
-      @
+      return this
 
     _handleTouchStart: (event) =>
 
-      return @ if @disabled
-      return @ if @_whileDrag
+      return this if @disabled
+      return this if @_whileDrag
 
       # It'll be bugged if gestured
-      return @ if ns.whileGesture
+      return this if ns.whileGesture
 
       # prevent if mouseclick
       event.preventDefault() if event.type is 'mousedown'
+
+      # detect eventNameSet then save
+      @_currentEventNameSet = ns.getEventNameSet event.type
 
       @_whileDrag = true
       @_slidecanceled = false
@@ -285,30 +289,36 @@ do ($=jQuery, window=window, document=document) ->
       d.applyTouchStart event
 
       # Let's observe move/end now
-      $document.on ns.touchMoveEventName, @_handleTouchMove
-      $document.on ns.touchEndEventName, @_handleTouchEnd
+      $document.on @_currentEventNameSet.move, @_handleTouchMove
+      $document.on @_currentEventNameSet.end, @_handleTouchEnd
 
-      @
+      return this
 
     _handleTouchMove: (event) =>
 
-      return @ unless @_whileDrag
-      return @ if ns.whileGesture
+      return this unless @_whileDrag
+      return this if ns.whileGesture
+
       @_currentDrag.applyTouchMove event
+
       if @_shouldSlideInner
         event.preventDefault()
         event.stopPropagation()
-      @
+      return this
 
     _handleTouchEnd: (event) =>
 
       @_whileDrag = false
 
       # unbind everything about this drag
-      $document.off ns.touchMoveEventName, @_handleTouchMove
-      $document.off ns.touchEndEventName, @_handleTouchEnd
+      $document.off @_currentEventNameSet.move, @_handleTouchMove
+      $document.off @_currentEventNameSet.end, @_handleTouchEnd
 
       @_currentDrag.destroy()
+
+      # we don't need nameset anymore
+      @_currentEventNameSet = null
+
       @trigger 'dragend' unless @_slidecanceled
 
       # enable click again
@@ -318,7 +328,7 @@ do ($=jQuery, window=window, document=document) ->
 
       # if inner was over, fit it to inside.
       @_handleInnerOver true
-      @
+      return this
 
     _moveInner: (x) ->
       left = @_innerStartLeft + x
@@ -332,11 +342,11 @@ do ($=jQuery, window=window, document=document) ->
       @$inner.css 'left', left
       data = { left: left }
       @trigger 'move', data
-      @
+      return this
 
     _handleInnerOver: (invokeEndEvent = false) ->
 
-      return @ if @isInnerTooNarrow()
+      return this if @isInnerTooNarrow()
 
       triggerEvent = =>
         @trigger 'moveend' if invokeEndEvent
@@ -349,7 +359,7 @@ do ($=jQuery, window=window, document=document) ->
       belowMin = left < @_minLeft
       unless overMax or belowMin
         triggerEvent()
-        return @
+        return this
 
       # normalize left
       to = @_maxLeft if overMax
@@ -358,7 +368,8 @@ do ($=jQuery, window=window, document=document) ->
       # then do slide
       @slide to, true, =>
         triggerEvent()
-      @
+      
+      return this
 
     _handleTooNarrow: ->
       if @isInnerTooNarrow()
@@ -366,7 +377,7 @@ do ($=jQuery, window=window, document=document) ->
         @$inner.css 'left', 0
       else
         @enable()
-      @
+      return this
 
     isInnerTooNarrow: ->
       elW = @$el.width()
@@ -375,11 +386,11 @@ do ($=jQuery, window=window, document=document) ->
 
     disable: ->
       @disabled = true
-      @
+      return this
 
     enable: ->
       @disabled = false
-      @
+      return this
 
     slide: (val, animate=false, callback) ->
 
@@ -389,9 +400,10 @@ do ($=jQuery, window=window, document=document) ->
       d = @options.backanim_duration
       e = @options.backanim_easing
 
-      to = { left: val }
+      to =
+        left: val
 
-      $.Deferred (defer) =>
+      return $.Deferred (defer) =>
         @trigger 'beforeslide'
         onDone = =>
           @trigger 'afterslide'
@@ -409,7 +421,7 @@ do ($=jQuery, window=window, document=document) ->
 
     updateInnerWidth: (val) ->
       @$inner.width val
-      @
+      return this
 
   # ============================================================
   # TouchdraghFitty
@@ -436,8 +448,8 @@ do ($=jQuery, window=window, document=document) ->
       options.beforefirstrefresh = (touchdragh) =>
 
         touchdragh.once 'firstrefresh', =>
-          @options.beforefirstrefresh?(@)
-          @trigger 'firstrefresh', @
+          @options.beforefirstrefresh?(this)
+          @trigger 'firstrefresh', this
           @_firstRefreshDone = true
 
         touchdragh.on 'refresh', => @trigger 'refresh'
@@ -459,7 +471,7 @@ do ($=jQuery, window=window, document=document) ->
             @updateIndex nextIndex
             @adjustToFit itemW, true
       @_touchdragh = new ns.TouchdraghEl @$el, options
-      @
+      return this
       
     updateIndex: (index) ->
       unless 0 <= index < @$items.length
@@ -470,7 +482,7 @@ do ($=jQuery, window=window, document=document) ->
         data =
           index: @currentIndex
         @trigger 'indexchange', data
-      true
+      return true
 
     refresh: ->
       @$items = @$el.find @options.item
@@ -480,17 +492,17 @@ do ($=jQuery, window=window, document=document) ->
       @$items.width itemW
       @_touchdragh.refresh()
       @adjustToFit itemW
-      @
+      return this
 
     adjustToFit: (itemWidth, animate=false, callback) ->
       itemWidth = @$items.width() unless itemWidth?
-      $.Deferred (defer) =>
+      return $.Deferred (defer) =>
         i = @currentIndex
         left_after = -itemWidth * i
         left_pre = @_touchdragh.currentSlideLeft()
         if left_after is left_pre
           defer.resolve()
-          return @
+          return this
         @trigger 'slidestart' unless @_sliding
         @_sliding = true
         @_touchdragh.slide left_after, animate, =>
@@ -504,7 +516,7 @@ do ($=jQuery, window=window, document=document) ->
 
     to: (index, animate=false) ->
       updated = @updateIndex (index)
-      $.Deferred (defer) =>
+      return $.Deferred (defer) =>
         if updated
           @adjustToFit null, animate, => defer.resolve()
         else
@@ -513,10 +525,10 @@ do ($=jQuery, window=window, document=document) ->
       .promise()
 
     next: (animate=false) ->
-      @to (@currentIndex + 1), animate
+      return @to (@currentIndex + 1), animate
 
     prev: (animate=false) ->
-      @to (@currentIndex - 1), animate
+      return @to (@currentIndex - 1), animate
     
 
   # ============================================================
@@ -527,14 +539,14 @@ do ($=jQuery, window=window, document=document) ->
       $el = $(el)
       instance = new ns.TouchdraghEl $el, options
       $el.data 'touchdragh', instance
-      @
+      return
 
   $.fn.touchdraghfitty = (options) ->
     @each (i, el) ->
       $el = $(el)
       instance = new ns.TouchdraghFitty $el, options
       $el.data 'touchdraghfitty', instance
-      @
+      return
 
   $.Touchdragh = ns.TouchdraghEl
   $.TouchdraghFitty = ns.TouchdraghFitty
