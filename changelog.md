@@ -1,5 +1,9 @@
 # Change log
 
+## v1.1.2
+
+* Fixed: delegate/undelegate arguments were wrong.
+
 ## v1.1.1
 
 * Fixed: some of bind/unbind should be delegate/undelegate.
