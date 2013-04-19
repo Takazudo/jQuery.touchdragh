@@ -335,7 +335,7 @@
         d.on('xscrolldetected', function() {
           _this._shouldSlideInner = true;
           _this.trigger('dragstart');
-          return _this.$el.bind('click', 'a', _this._handleClickToIgnore);
+          return _this.$el.delegate('click', 'a', _this._handleClickToIgnore);
         });
         d.on('dragmove', function(data) {
           _this.trigger('drag');
@@ -374,7 +374,7 @@
           this.trigger('dragend');
         }
         setTimeout(function() {
-          return _this.$el.unbind('click', 'a', _this._handleClickToIgnore);
+          return _this.$el.undelegate('click', 'a', _this._handleClickToIgnore);
         }, 10);
         this._handleInnerOver(true);
         return this;

@@ -279,7 +279,7 @@ do ($=jQuery, window=window, document=document) ->
         @_shouldSlideInner = true
         @trigger 'dragstart'
         # ignore click if drag
-        @$el.bind 'click', 'a', @_handleClickToIgnore
+        @$el.delegate 'click', 'a', @_handleClickToIgnore
       d.on 'dragmove', (data) =>
         @trigger 'drag'
         @_moveInner data.x
@@ -323,7 +323,7 @@ do ($=jQuery, window=window, document=document) ->
 
       # enable click again
       setTimeout =>
-        @$el.unbind 'click', 'a', @_handleClickToIgnore
+        @$el.undelegate 'click', 'a', @_handleClickToIgnore
       , 10
 
       # if inner was over, fit it to inside.
