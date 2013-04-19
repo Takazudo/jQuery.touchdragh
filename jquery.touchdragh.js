@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-04-18
+ * lastupdate: 2013-04-19
  * version: 1.0.0
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -82,10 +82,10 @@
       initDone = false;
       init = function() {
         initDone = true;
-        $document.on('gesturestart', function() {
+        $document.bind('gesturestart', function() {
           return ns.whileGesture = true;
         });
-        return $document.on('gestureend', function() {
+        return $document.bind('gestureend', function() {
           return ns.whileGesture = false;
         });
       };
@@ -294,7 +294,7 @@
       TouchdraghEl.prototype._eventify = function() {
         var eventNames;
         eventNames = 'pointerdown MSPointerDown touchstart mousedown';
-        this.$el.on(eventNames, this._handleTouchStart);
+        this.$el.bind(eventNames, this._handleTouchStart);
         if (ns.support.addEventListener) {
           this.el.addEventListener('click', $.noop, true);
         }
@@ -335,7 +335,7 @@
         d.on('xscrolldetected', function() {
           _this._shouldSlideInner = true;
           _this.trigger('dragstart');
-          return _this.$el.on('click', 'a', _this._handleClickToIgnore);
+          return _this.$el.bind('click', 'a', _this._handleClickToIgnore);
         });
         d.on('dragmove', function(data) {
           _this.trigger('drag');
@@ -343,8 +343,8 @@
         });
         this._innerStartLeft = ns.getLeftPx(this.$inner);
         d.applyTouchStart(event);
-        $document.on(this._currentEventNameSet.move, this._handleTouchMove);
-        $document.on(this._currentEventNameSet.end, this._handleTouchEnd);
+        $document.bind(this._currentEventNameSet.move, this._handleTouchMove);
+        $document.bind(this._currentEventNameSet.end, this._handleTouchEnd);
         return this;
       };
 
@@ -366,15 +366,15 @@
       TouchdraghEl.prototype._handleTouchEnd = function(event) {
         var _this = this;
         this._whileDrag = false;
-        $document.off(this._currentEventNameSet.move, this._handleTouchMove);
-        $document.off(this._currentEventNameSet.end, this._handleTouchEnd);
+        $document.unbind(this._currentEventNameSet.move, this._handleTouchMove);
+        $document.unbind(this._currentEventNameSet.end, this._handleTouchEnd);
         this._currentDrag.destroy();
         this._currentEventNameSet = null;
         if (!this._slidecanceled) {
           this.trigger('dragend');
         }
         setTimeout(function() {
-          return _this.$el.off('click', 'a', _this._handleClickToIgnore);
+          return _this.$el.unbind('click', 'a', _this._handleClickToIgnore);
         }, 10);
         this._handleInnerOver(true);
         return this;

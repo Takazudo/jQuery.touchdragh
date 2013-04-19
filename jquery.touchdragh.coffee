@@ -87,9 +87,9 @@ do ($=jQuery, window=window, document=document) ->
     initDone = false
     init = ->
       initDone = true
-      $document.on 'gesturestart', ->
+      $document.bind 'gesturestart', ->
         ns.whileGesture = true
-      $document.on 'gestureend', ->
+      $document.bind 'gestureend', ->
         ns.whileGesture = false
     ->
       return if @initDone
@@ -241,7 +241,7 @@ do ($=jQuery, window=window, document=document) ->
 
     _eventify: ->
       eventNames = 'pointerdown MSPointerDown touchstart mousedown'
-      @$el.on eventNames, @_handleTouchStart
+      @$el.bind eventNames, @_handleTouchStart
       if ns.support.addEventListener
         @el.addEventListener 'click', $.noop , true
       return this
@@ -279,7 +279,7 @@ do ($=jQuery, window=window, document=document) ->
         @_shouldSlideInner = true
         @trigger 'dragstart'
         # ignore click if drag
-        @$el.on 'click', 'a', @_handleClickToIgnore
+        @$el.bind 'click', 'a', @_handleClickToIgnore
       d.on 'dragmove', (data) =>
         @trigger 'drag'
         @_moveInner data.x
@@ -289,8 +289,8 @@ do ($=jQuery, window=window, document=document) ->
       d.applyTouchStart event
 
       # Let's observe move/end now
-      $document.on @_currentEventNameSet.move, @_handleTouchMove
-      $document.on @_currentEventNameSet.end, @_handleTouchEnd
+      $document.bind @_currentEventNameSet.move, @_handleTouchMove
+      $document.bind @_currentEventNameSet.end, @_handleTouchEnd
 
       return this
 
@@ -311,8 +311,8 @@ do ($=jQuery, window=window, document=document) ->
       @_whileDrag = false
 
       # unbind everything about this drag
-      $document.off @_currentEventNameSet.move, @_handleTouchMove
-      $document.off @_currentEventNameSet.end, @_handleTouchEnd
+      $document.unbind @_currentEventNameSet.move, @_handleTouchMove
+      $document.unbind @_currentEventNameSet.end, @_handleTouchEnd
 
       @_currentDrag.destroy()
 
@@ -323,7 +323,7 @@ do ($=jQuery, window=window, document=document) ->
 
       # enable click again
       setTimeout =>
-        @$el.off 'click', 'a', @_handleClickToIgnore
+        @$el.unbind 'click', 'a', @_handleClickToIgnore
       , 10
 
       # if inner was over, fit it to inside.

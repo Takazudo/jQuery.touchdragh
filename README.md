@@ -20,7 +20,7 @@ See demos.
 
 ## Required
 
-jQuery 1.9.1 (>= 1.7)
+jQuery 1.9.1 (>= 1.5.1)
 
 ## FAQ
 
