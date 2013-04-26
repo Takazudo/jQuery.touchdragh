@@ -1,6 +1,10 @@
 # Change log
 
-## v2.0.0
+## v1.2.1
+
+* Fiexed: on steppy, index was moved even if it was not dragged.
+
+## v1.2.0
 
 * impmlemented TouchdraghSteppy.
 
