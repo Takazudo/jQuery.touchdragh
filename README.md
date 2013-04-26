@@ -9,8 +9,9 @@ See demos.
 
 ## Demos
 
-* [http://takazudo.github.io/jQuery.touchdragh/demos/1/](http://takazudo.github.io/jQuery.touchdragh/demos/1/)
-* [http://takazudo.github.io/jQuery.touchdragh/demos/2/](http://takazudo.github.io/jQuery.touchdragh/demos/2/)
+* touchdragh [http://takazudo.github.io/jQuery.touchdragh/demos/1/](http://takazudo.github.io/jQuery.touchdragh/demos/1/)
+* touchdraghfitty [http://takazudo.github.io/jQuery.touchdragh/demos/2/](http://takazudo.github.io/jQuery.touchdragh/demos/2/)
+* touchdraghsteppy [http://takazudo.github.io/jQuery.touchdragh/demos/3/](http://takazudo.github.io/jQuery.touchdragh/demos/3/)
 
 ## Browsers
 

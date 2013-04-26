@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-04-19
+ * lastupdate: 2013-04-27
  * version: 1.1.2
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -678,6 +678,223 @@
       return TouchdraghFitty;
 
     })(ns.Event);
+    ns.TouchdraghSteppy = (function(_super) {
+
+      __extends(TouchdraghSteppy, _super);
+
+      TouchdraghSteppy.prototype.defaults = {
+        item: null,
+        beforefirstfresh: null,
+        startindex: 0,
+        maxindex: 7,
+        triggerrefreshimmediately: true,
+        stepwidth: 300,
+        widthbetween: 0
+      };
+
+      function TouchdraghSteppy($el, options) {
+        this.$el = $el;
+        this.options = $.extend({}, this.defaults, options);
+        this.currentIndex = this.options.startindex;
+        this._prepareTouchdragh();
+        if (this.options.triggerrefreshimmediately) {
+          this.refresh();
+        }
+      }
+
+      TouchdraghSteppy.prototype._prepareTouchdragh = function() {
+        var options,
+          _this = this;
+        options = $.extend({}, this.options);
+        options.triggerrefreshimmediately = false;
+        options.beforefirstrefresh = function(touchdragh) {
+          touchdragh.once('firstrefresh', function() {
+            var _base;
+            if (typeof (_base = _this.options).beforefirstrefresh === "function") {
+              _base.beforefirstrefresh(_this);
+            }
+            _this.trigger('firstrefresh', _this);
+            return _this._firstRefreshDone = true;
+          });
+          touchdragh.on('refresh', function() {
+            return _this.trigger('refresh');
+          });
+          touchdragh.on('slidecancel', function() {
+            return _this.trigger('slidecancel');
+          });
+          touchdragh.on('dragstart', function() {
+            return _this.trigger('dragstart');
+          });
+          touchdragh.on('drag', function() {
+            return _this.trigger('drag');
+          });
+          touchdragh.on('dragend', function() {
+            return _this.trigger('dragend');
+          });
+          return touchdragh.on('moveend', function() {
+            _this.updateIndex(_this._calcIndexFromCurrentSlideLeft());
+            return _this.adjustToFit(true);
+          });
+        };
+        this._touchdragh = new ns.TouchdraghEl(this.$el, options);
+        return this;
+      };
+
+      TouchdraghSteppy.prototype._calcIndexFromCurrentSlideLeft = function() {
+        var goingToNegative, goingToPositive, halfLeft, index, left, maxLeft, minLeft, nextIndex;
+        left = this._touchdragh.currentSlideLeft();
+        index = 0;
+        nextIndex = null;
+        goingToPositive = false;
+        goingToNegative = false;
+        while (index <= this.options.maxindex) {
+          maxLeft = this._calcLeftFromIndex(index);
+          minLeft = this._calcLeftFromIndex(index + 1);
+          halfLeft = minLeft + (maxLeft - minLeft) / 2;
+          if ((minLeft <= left && left <= maxLeft)) {
+            if (left >= halfLeft) {
+              nextIndex = index;
+              goingToPositive = true;
+            } else {
+              nextIndex = index + 1;
+              goingToNegative = true;
+            }
+          }
+          if (nextIndex === null) {
+            index += 1;
+          } else {
+            break;
+          }
+        }
+        if (nextIndex === this.currentIndex) {
+          if (goingToPositive) {
+            nextIndex += 1;
+          } else if (goingToNegative) {
+            nextIndex -= 1;
+          }
+        }
+        return nextIndex;
+      };
+
+      TouchdraghSteppy.prototype.updateIndex = function(index) {
+        var data, lastIndex;
+        if (!((0 <= index && index <= this.options.maxindex))) {
+          return false;
+        }
+        lastIndex = this.currentIndex;
+        this.currentIndex = index;
+        if (lastIndex !== index) {
+          data = {
+            index: this.currentIndex
+          };
+          this.trigger('indexchange', data);
+        }
+        return true;
+      };
+
+      TouchdraghSteppy.prototype.refresh = function() {
+        var innerW, l, stepW;
+        this.$items = this.$el.find(this.options.item);
+        l = this.$items.length;
+        stepW = this.options.stepwidth;
+        innerW = stepW * l;
+        if (l > 0) {
+          innerW += this.options.widthbetween * (l - 1);
+        }
+        this._touchdragh.updateInnerWidth(innerW);
+        this.$items.width(stepW);
+        this._touchdragh.refresh();
+        this.adjustToFit();
+        return this;
+      };
+
+      TouchdraghSteppy.prototype._calcLeftFromIndex = function(index) {
+        var betweenW, i, left, stepW;
+        stepW = this.options.stepwidth;
+        betweenW = this.options.widthbetween;
+        i = 0;
+        left = 0;
+        while (i < index) {
+          i += 1;
+          left -= stepW;
+          if (i !== 0) {
+            left -= betweenW;
+          }
+        }
+        return left;
+      };
+
+      TouchdraghSteppy.prototype.adjustToFit = function(animate, callback) {
+        var betweenW, stepW,
+          _this = this;
+        if (animate == null) {
+          animate = false;
+        }
+        stepW = this.options.stepwidth;
+        betweenW = this.options.widthbetween;
+        return $.Deferred(function(defer) {
+          var left_after, left_pre;
+          left_after = _this._calcLeftFromIndex(_this.currentIndex);
+          left_pre = _this._touchdragh.currentSlideLeft();
+          if (left_after === left_pre) {
+            defer.resolve();
+            return _this;
+          }
+          if (!_this._sliding) {
+            _this.trigger('slidestart');
+          }
+          _this._sliding = true;
+          return _this._touchdragh.slide(left_after, animate, function() {
+            var data;
+            _this._sliding = false;
+            data = {
+              index: _this.currentIndex
+            };
+            _this.trigger('slideend', data);
+            if (typeof callback === "function") {
+              callback();
+            }
+            return defer.resolve();
+          });
+        }).promise();
+      };
+
+      TouchdraghSteppy.prototype.to = function(index, animate) {
+        var updated,
+          _this = this;
+        if (animate == null) {
+          animate = false;
+        }
+        updated = this.updateIndex(index);
+        return $.Deferred(function(defer) {
+          if (updated) {
+            return _this.adjustToFit(animate, function() {
+              return defer.resolve();
+            });
+          } else {
+            _this.trigger('invalidindexrequested');
+            return defer.resolve();
+          }
+        }).promise();
+      };
+
+      TouchdraghSteppy.prototype.next = function(animate) {
+        if (animate == null) {
+          animate = false;
+        }
+        return this.to(this.currentIndex + 1, animate);
+      };
+
+      TouchdraghSteppy.prototype.prev = function(animate) {
+        if (animate == null) {
+          animate = false;
+        }
+        return this.to(this.currentIndex - 1, animate);
+      };
+
+      return TouchdraghSteppy;
+
+    })(ns.Event);
     $.fn.touchdragh = function(options) {
       return this.each(function(i, el) {
         var $el, instance;
@@ -692,6 +909,14 @@
         $el = $(el);
         instance = new ns.TouchdraghFitty($el, options);
         $el.data('touchdraghfitty', instance);
+      });
+    };
+    $.fn.touchdraghsteppy = function(options) {
+      return this.each(function(i, el) {
+        var $el, instance;
+        $el = $(el);
+        instance = new ns.TouchdraghSteppy($el, options);
+        $el.data('touchdraghsteppy', instance);
       });
     };
     $.Touchdragh = ns.TouchdraghEl;

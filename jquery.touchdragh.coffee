@@ -529,23 +529,180 @@ do ($=jQuery, window=window, document=document) ->
 
     prev: (animate=false) ->
       return @to (@currentIndex - 1), animate
+
+  # ============================================================
+  # TouchdraghSteppy
+
+  class ns.TouchdraghSteppy extends ns.Event
     
+    defaults:
+      item: null # selector
+      beforefirstfresh: null # fn
+      startindex: 0
+      maxindex: 7
+      triggerrefreshimmediately: true
+      stepwidth: 300
+      widthbetween: 0
+
+    constructor: (@$el, options) ->
+      @options = $.extend {}, @defaults, options
+      @currentIndex = @options.startindex
+      @_prepareTouchdragh()
+      @refresh() if @options.triggerrefreshimmediately
+
+    _prepareTouchdragh: ->
+      
+      options = $.extend {}, @options
+      options.triggerrefreshimmediately = false
+
+      options.beforefirstrefresh = (touchdragh) =>
+
+        touchdragh.once 'firstrefresh', =>
+          @options.beforefirstrefresh?(this)
+          @trigger 'firstrefresh', this
+          @_firstRefreshDone = true
+
+        touchdragh.on 'refresh', => @trigger 'refresh'
+        touchdragh.on 'slidecancel', => @trigger 'slidecancel'
+        touchdragh.on 'dragstart', => @trigger 'dragstart'
+        touchdragh.on 'drag', => @trigger 'drag'
+        touchdragh.on 'dragend', => @trigger 'dragend'
+
+        touchdragh.on 'moveend', =>
+          @updateIndex @_calcIndexFromCurrentSlideLeft()
+          @adjustToFit true
+
+      @_touchdragh = new ns.TouchdraghEl @$el, options
+      return this
+
+    _calcIndexFromCurrentSlideLeft: ->
+
+      left = @_touchdragh.currentSlideLeft()
+
+      index = 0
+      nextIndex = null
+
+      goingToPositive = false
+      goingToNegative = false
+
+      while index <= @options.maxindex
+        maxLeft = @_calcLeftFromIndex index
+        minLeft = @_calcLeftFromIndex (index + 1)
+        halfLeft = minLeft + (maxLeft - minLeft) / 2
+        if minLeft <= left <= maxLeft
+          if left >= halfLeft
+            nextIndex = index
+            goingToPositive = true
+          else
+            nextIndex = index + 1
+            goingToNegative = true
+        if nextIndex is null
+          index += 1
+        else
+          break
+
+      if nextIndex is @currentIndex
+        if goingToPositive
+          nextIndex += 1
+        else if goingToNegative
+          nextIndex -= 1
+
+      return nextIndex
+    
+    updateIndex: (index) ->
+      unless 0 <= index <= @options.maxindex
+        return false
+      lastIndex = @currentIndex
+      @currentIndex = index
+      if lastIndex isnt index
+        data =
+          index: @currentIndex
+        @trigger 'indexchange', data
+      return true
+
+    refresh: ->
+      @$items = @$el.find @options.item
+      l = @$items.length
+      stepW = @options.stepwidth
+      innerW = stepW * l
+      if l > 0
+        innerW += @options.widthbetween * (l-1)
+      @_touchdragh.updateInnerWidth innerW
+      @$items.width stepW
+      @_touchdragh.refresh()
+      @adjustToFit()
+      return this
+
+    _calcLeftFromIndex: (index) ->
+      stepW = @options.stepwidth
+      betweenW = @options.widthbetween
+      i = 0
+      left = 0
+      while i < index
+        i += 1
+        left -= stepW
+        left -= betweenW unless i is 0
+      return left
+
+    adjustToFit: (animate=false, callback) ->
+      stepW = @options.stepwidth
+      betweenW = @options.widthbetween
+      return $.Deferred (defer) =>
+        left_after = @_calcLeftFromIndex @currentIndex
+        left_pre = @_touchdragh.currentSlideLeft()
+        if left_after is left_pre
+          defer.resolve()
+          return this
+        @trigger 'slidestart' unless @_sliding
+        @_sliding = true
+        @_touchdragh.slide left_after, animate, =>
+          @_sliding = false
+          data =
+            index: @currentIndex
+          @trigger 'slideend', data
+          callback?()
+          defer.resolve()
+      .promise()
+
+    to: (index, animate=false) ->
+      updated = @updateIndex index
+      return $.Deferred (defer) =>
+        if updated
+          @adjustToFit animate, => defer.resolve()
+        else
+          @trigger 'invalidindexrequested'
+          defer.resolve()
+      .promise()
+
+    next: (animate=false) ->
+      return @to (@currentIndex + 1), animate
+
+    prev: (animate=false) ->
+      return @to (@currentIndex - 1), animate
+
 
   # ============================================================
   # bridge to plugin
 
   $.fn.touchdragh = (options) ->
-    @each (i, el) ->
+    return @each (i, el) ->
       $el = $(el)
       instance = new ns.TouchdraghEl $el, options
       $el.data 'touchdragh', instance
       return
 
   $.fn.touchdraghfitty = (options) ->
-    @each (i, el) ->
+    return @each (i, el) ->
       $el = $(el)
       instance = new ns.TouchdraghFitty $el, options
       $el.data 'touchdraghfitty', instance
+      return
+
+  $.fn.touchdraghsteppy = (options) ->
+    return @each (i, el) ->
+      $el = $(el)
+      instance = new ns.TouchdraghSteppy $el, options
+      $el.data 'touchdraghsteppy', instance
       return
 
   $.Touchdragh = ns.TouchdraghEl
