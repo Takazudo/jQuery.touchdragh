@@ -1,5 +1,9 @@
 # Change log
 
+## v2.0.0
+
+* impmlemented TouchdraghSteppy.
+
 ## v1.1.2
 
 * Fixed: delegate/undelegate arguments were wrong.

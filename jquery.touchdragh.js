@@ -741,10 +741,11 @@
       };
 
       TouchdraghSteppy.prototype._calcIndexFromCurrentSlideLeft = function() {
-        var goingToNegative, goingToPositive, halfLeft, index, left, maxLeft, minLeft, nextIndex;
+        var goingToNegative, goingToPositive, halfLeft, index, left, maxLeft, minLeft, nextIndex, onStepLine;
         left = this._touchdragh.currentSlideLeft();
         index = 0;
         nextIndex = null;
+        onStepLine = false;
         goingToPositive = false;
         goingToNegative = false;
         while (index <= this.options.maxindex) {
@@ -752,6 +753,9 @@
           minLeft = this._calcLeftFromIndex(index + 1);
           halfLeft = minLeft + (maxLeft - minLeft) / 2;
           if ((minLeft <= left && left <= maxLeft)) {
+            if ((left === minLeft) || (left === maxLeft)) {
+              onStepLine = true;
+            }
             if (left >= halfLeft) {
               nextIndex = index;
               goingToPositive = true;
@@ -766,7 +770,7 @@
             break;
           }
         }
-        if (nextIndex === this.currentIndex) {
+        if ((nextIndex === this.currentIndex) && (!onStepLine)) {
           if (goingToPositive) {
             nextIndex += 1;
           } else if (goingToNegative) {

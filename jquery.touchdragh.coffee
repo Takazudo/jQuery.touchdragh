@@ -582,6 +582,7 @@ do ($=jQuery, window=window, document=document) ->
       index = 0
       nextIndex = null
 
+      onStepLine = false
       goingToPositive = false
       goingToNegative = false
 
@@ -590,18 +591,23 @@ do ($=jQuery, window=window, document=document) ->
         minLeft = @_calcLeftFromIndex (index + 1)
         halfLeft = minLeft + (maxLeft - minLeft) / 2
         if minLeft <= left <= maxLeft
+
+          if (left is minLeft) or (left is maxLeft)
+            onStepLine = true
+
           if left >= halfLeft
             nextIndex = index
             goingToPositive = true
           else
             nextIndex = index + 1
             goingToNegative = true
+
         if nextIndex is null
           index += 1
         else
           break
 
-      if nextIndex is @currentIndex
+      if (nextIndex is @currentIndex) and (not onStepLine)
         if goingToPositive
           nextIndex += 1
         else if goingToNegative
