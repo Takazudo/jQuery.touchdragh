@@ -1,5 +1,9 @@
 # Change log
 
+## v1.3.0
+
+* implemented transition / transforms using jquery.transit.
+
 ## v1.2.1
 
 * Fiexed: on steppy, index was moved even if it was not dragged.
