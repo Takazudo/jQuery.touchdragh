@@ -1,0 +1,87 @@
+<!doctype html>
+<html class="no-js" lang="ja">
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles.css">
+<script src="../../libs/jquery/1.5.1/jquery.js"></script>
+<script src="../../libs/jquery.transit.js"></script>
+<script src="../../jquery.touchdragh.js"></script>
+<script>
+$(function() {
+
+  var console = window.console || {};
+  console.log = console.log || $.noop;
+
+  var $button1 = $('#button1');
+  var $button2 = $('#button2');
+  var $button3 = $('#button3');
+  var $button4 = $('#button4');
+
+  var eventNames = [
+    'dragstart',
+    'drag',
+    'dragend',
+    'moveend',
+    'refresh',
+    'firstrefresh',
+    'beforeslide',
+    'afterslide',
+    'slidecancel'
+  ];
+
+  $('.box').each(function() {
+
+    var instance;
+
+    var $el = $(this);
+    $el.touchdragh({
+      inner: '.box-inner',
+      beforefirstrefresh: function(instance) {
+        $.each(eventNames, function(i, ev) {
+          instance.on(ev, function() {
+            console.log(ev);
+          });
+        });
+      }
+    });
+
+    instance = $el.data('touchdragh');
+
+    $button1.click(function() { instance.slide(-200); });
+    $button2.click(function() { instance.slide(-500, true); });
+    $button3.click(function() { instance.slide(-9999); });
+    $button4.click(function() { instance.slide(0); });
+
+    $(window).bind('resize', function() {
+      instance.refresh();
+    });
+
+  });
+});
+</script>
+</head>
+<body>
+
+<div class="box" id="box1">
+  <div class="box-inner">
+    THE QUICK BROWN FOX <img src="../imgs/1.jpg" alt="" width="60" height="60"> JUMPS OVER THE LAZY DOG.
+  </div>
+</div>
+
+<div class="box" id="box2">
+  <div class="box-inner">
+    THE <a href="http://example.com">QUICK</a> BROWN FOX JUMPS OVER THE <a href="http://example.com">LAZY</a> DOG.
+  </div>
+</div>
+
+<div class="buttons">
+  <button id="button1">slide(-200)</button>
+  <button id="button2">slide(-500, true)</button>
+  <button id="button3">slide(-9999)</button>
+  <button id="button4">slide(0)</button>
+</div>
+
+</body>
+</html>

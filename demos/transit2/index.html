@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="styles.css">
 <script src="../../libs/jquery/1.5.1/jquery.js"></script>
+<script src="../../libs/jquery.transit.js"></script>
 <script src="../../jquery.touchdragh.js"></script>
 <script>
 $(function() {
@@ -39,11 +40,10 @@ $(function() {
 
     var $el = $(this);
 
-    $el.touchdraghsteppy({
+    $el.touchdraghfitty({
       inner: '.box-inner',
       item: '.item',
-      stepwidth: 140,
-      widthbetween: 20,
+      triggerrefreshimmediately: false,
       beforefirstrefresh: function(ins) {
         instance = ins;
         $.each(eventNames, function(i, ev) {
@@ -57,6 +57,16 @@ $(function() {
       }
     });
 
+    instance = $el.data('touchdraghfitty');
+
+    function update() {
+      instance.refresh();
+      $el.height($el.width());
+    }
+
+    $(window).bind('resize', update);
+    update();
+
     $button1.click(function() { instance.prev(); });
     $button2.click(function() { instance.next(true); });
     $button3.click(function() { instance.to(0); });
@@ -69,11 +79,11 @@ $(function() {
 });
 </script>
 </head>
-<body><div class="all">
+<body>
 
 <div class="box" id="box1">
   <div class="box-inner">
-		<div class="item first">A</div>
+		<div class="item">A</div>
 		<div class="item"><a href="http://example.com">B</a></div>
 		<div class="item"><img src="../imgs/1.jpg" alt=""></div>
 		<div class="item">D</div>
@@ -95,5 +105,5 @@ $(function() {
   <button id="button7">.to(9999)</button>
 </div>
 
-</div></body>
+</body>
 </html>

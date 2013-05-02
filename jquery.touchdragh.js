@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-04-27
+ * lastupdate: 2013-05-03
  * version: 1.2.1
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -32,6 +32,25 @@
     ns.support.addEventListener = 'addEventListener' in document;
     ns.support.touch = 'ontouchend' in document;
     ns.support.mspointer = window.navigator.msPointerEnabled || false;
+    ns.support.transition = (function() {
+      if ($.support.transition && $.support.transform && ($.fn.transition != null)) {
+        return true;
+      }
+      return false;
+    })();
+    ns.transitionEnabled = ns.support.transition;
+    ns.enableTransition = function() {
+      if (!ns.support.transition) {
+        return;
+      }
+      ns.support.transition = true;
+    };
+    ns.disableTransition = function() {
+      if (!ns.support.transition) {
+        return;
+      }
+      ns.support.transition = false;
+    };
     ns.ua.win8orhigh = (function() {
       var matched, ua, version;
       ua = navigator.userAgent;
@@ -68,8 +87,13 @@
       return res;
     };
     ns.getLeftPx = function($el) {
-      var l;
-      l = $el.css('left');
+      var l, prop;
+      if (ns.transitionEnabled) {
+        prop = 'x';
+      } else {
+        prop = 'left';
+      }
+      l = $el.css(prop);
       if (l === 'auto') {
         l = 0;
       } else {
@@ -282,6 +306,11 @@
             position: 'relative'
           });
         }
+        if (ns.transitionEnabled) {
+          this.$inner.css({
+            x: 0
+          });
+        }
         return this;
       };
 
@@ -381,14 +410,23 @@
       };
 
       TouchdraghEl.prototype._moveInner = function(x) {
-        var data, left;
+        var data, left, to;
         left = this._innerStartLeft + x;
         if (left > this._maxLeft) {
           left = this._maxLeft + ((left - this._maxLeft) / 3);
         } else if (left < this._minLeft) {
           left = this._minLeft + ((left - this._minLeft) / 3);
         }
-        this.$inner.css('left', left);
+        if (ns.transitionEnabled) {
+          to = {
+            x: left
+          };
+        } else {
+          to = {
+            left: left
+          };
+        }
+        this.$inner.css(to);
         data = {
           left: left
         };
@@ -471,9 +509,15 @@
         }
         d = this.options.backanim_duration;
         e = this.options.backanim_easing;
-        to = {
-          left: val
-        };
+        if (ns.transitionEnabled) {
+          to = {
+            x: val
+          };
+        } else {
+          to = {
+            left: val
+          };
+        }
         return $.Deferred(function(defer) {
           var onDone;
           _this.trigger('beforeslide');
@@ -485,9 +529,16 @@
             return defer.resolve();
           };
           if (animate) {
-            return _this.$inner.stop().animate(to, d, e, function() {
-              return onDone();
-            });
+            if (ns.transitionEnabled) {
+              e = 'easeOutExpo';
+              return _this.$inner.stop().transition(to, d, e, function() {
+                return onDone();
+              });
+            } else {
+              return _this.$inner.stop().animate(to, d, e, function() {
+                return onDone();
+              });
+            }
           } else {
             _this.$inner.stop().css(to);
             return onDone();

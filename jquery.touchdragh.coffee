@@ -39,6 +39,23 @@ do ($=jQuery, window=window, document=document) ->
   # http://msdn.microsoft.com/en-us/library/ie/hh673557(v=vs.85).aspx
   ns.support.mspointer = window.navigator.msPointerEnabled or false
 
+  # switch transition by transit plugin.
+  ns.support.transition = do ->
+    return true if $.support.transition and $.support.transform and $.fn.transition?
+    return false
+
+  ns.transitionEnabled = ns.support.transition
+
+  ns.enableTransition = ->
+    return unless ns.support.transition
+    ns.support.transition = true
+    return
+
+  ns.disableTransition = ->
+    return unless ns.support.transition
+    ns.support.transition = false
+    return
+
   # http://msdn.microsoft.com/en-us/library/ie/hh920767(v=vs.85).aspx
   ns.ua.win8orhigh = do ->
     # windows browsers has str like "Windows NT 6.2" in its UA
@@ -73,7 +90,11 @@ do ($=jQuery, window=window, document=document) ->
   # left value getter
 
   ns.getLeftPx = ($el) ->
-    l = $el.css 'left'
+    if ns.transitionEnabled
+      prop = 'x'
+    else
+      prop = 'left'
+    l = $el.css prop
     if l is 'auto'
       l = 0
     else
@@ -91,7 +112,7 @@ do ($=jQuery, window=window, document=document) ->
         ns.whileGesture = true
       $document.bind 'gestureend', ->
         ns.whileGesture = false
-    ->
+    return ->
       return if @initDone
       init()
 
@@ -232,6 +253,8 @@ do ($=jQuery, window=window, document=document) ->
       if @options.tweakinnerpositionstyle
         @$inner.css
           position: 'relative'
+      if ns.transitionEnabled
+        @$inner.css { x: 0 }
       return this
     
     _calcMinMaxLeft: ->
@@ -339,8 +362,14 @@ do ($=jQuery, window=window, document=document) ->
       else if (left < @_minLeft)
         left = @_minLeft + ((left - @_minLeft) / 3)
 
-      @$inner.css 'left', left
+      if ns.transitionEnabled
+        to = { x: left }
+      else
+        to = { left: left }
+
+      @$inner.css to
       data = { left: left }
+
       @trigger 'move', data
       return this
 
@@ -400,8 +429,10 @@ do ($=jQuery, window=window, document=document) ->
       d = @options.backanim_duration
       e = @options.backanim_easing
 
-      to =
-        left: val
+      if ns.transitionEnabled
+        to = x: val
+      else
+        to = left: val
 
       return $.Deferred (defer) =>
         @trigger 'beforeslide'
@@ -410,7 +441,11 @@ do ($=jQuery, window=window, document=document) ->
           callback?()
           defer.resolve()
         if animate
-          @$inner.stop().animate to, d, e, => onDone()
+          if ns.transitionEnabled
+            e = 'easeOutExpo' # use transit's easing
+            @$inner.stop().transition to, d, e, => onDone()
+          else
+            @$inner.stop().animate to, d, e, => onDone()
         else
           @$inner.stop().css to
           onDone()
