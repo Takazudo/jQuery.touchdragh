@@ -1,5 +1,10 @@
 # Change log
 
+## v1.3.1
+
+* touchdraghsteppy: implemented `updateOption` method.
+* touchdraghsteppy: needed maxindex but was not specified in demos.
+
 ## v1.3.0
 
 * implemented transition / transforms using jquery.transit.
