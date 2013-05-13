@@ -11,15 +11,16 @@ See demos.
 
 standard
 
-* touchdragh [http://takazudo.github.io/jQuery.touchdragh/demos/1/](http://takazudo.github.io/jQuery.touchdragh/demos/1/)
-* touchdraghfitty [http://takazudo.github.io/jQuery.touchdragh/demos/2/](http://takazudo.github.io/jQuery.touchdragh/demos/2/)
-* touchdraghsteppy [http://takazudo.github.io/jQuery.touchdragh/demos/3/](http://takazudo.github.io/jQuery.touchdragh/demos/3/)
+* touchdragh [demo](http://takazudo.github.io/jQuery.touchdragh/demos/1/)
+* touchdraghfitty [demo](http://takazudo.github.io/jQuery.touchdragh/demos/2/)
+* touchdraghsteppy [demo](http://takazudo.github.io/jQuery.touchdragh/demos/3/)
 
 with [jquery.transit](http://ricostacruz.com/jquery.transit/)
 
-* touchdragh [http://takazudo.github.io/jQuery.touchdragh/demos/transit1/](http://takazudo.github.io/jQuery.touchdragh/demos/transit1/)
-* touchdraghfitty [http://takazudo.github.io/jQuery.touchdragh/demos/transit2/](http://takazudo.github.io/jQuery.touchdragh/demos/transit2/)
-* touchdraghsteppy [http://takazudo.github.io/jQuery.touchdragh/demos/transit3/](http://takazudo.github.io/jQuery.touchdragh/demos/transit3/)
+* touchdragh [demo](http://takazudo.github.io/jQuery.touchdragh/demos/transit1/)
+* touchdraghfitty [demo](http://takazudo.github.io/jQuery.touchdragh/demos/transit2/)
+* touchdraghsteppy [demo](http://takazudo.github.io/jQuery.touchdragh/demos/transit3/)
+* touchdraghsteppy [mobileExample1](http://takazudo.github.io/jQuery.touchdragh/demos/mobileExample1/)
 
 
 ## Browsers
