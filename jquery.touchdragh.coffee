@@ -574,7 +574,7 @@ do ($=jQuery, window=window, document=document) ->
       item: null # selector
       beforefirstfresh: null # fn
       startindex: 0
-      maxindex: 7
+      maxindex: 0 # need to be specified
       triggerrefreshimmediately: true
       stepwidth: 300
       widthbetween: 0
@@ -720,6 +720,11 @@ do ($=jQuery, window=window, document=document) ->
 
     prev: (animate=false) ->
       return @to (@currentIndex - 1), animate
+
+    updateOption: (options) ->
+      @options = $.extend @options, options
+      @refresh()
+      return this
 
 
   # ============================================================

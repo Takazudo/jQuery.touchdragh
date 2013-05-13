@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-05-03
+ * lastupdate: 2013-05-14
  * version: 1.3.0
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -737,7 +737,7 @@
         item: null,
         beforefirstfresh: null,
         startindex: 0,
-        maxindex: 7,
+        maxindex: 0,
         triggerrefreshimmediately: true,
         stepwidth: 300,
         widthbetween: 0
@@ -945,6 +945,12 @@
           animate = false;
         }
         return this.to(this.currentIndex - 1, animate);
+      };
+
+      TouchdraghSteppy.prototype.updateOption = function(options) {
+        this.options = $.extend(this.options, options);
+        this.refresh();
+        return this;
       };
 
       return TouchdraghSteppy;
