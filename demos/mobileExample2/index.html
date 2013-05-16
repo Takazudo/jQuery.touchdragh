@@ -210,6 +210,9 @@ $(function() {
 
   var initializeInside = function($dialogRoot) {
 
+    $dialogRoot.on('touchmove', function(e) {
+      e.preventDefault();
+    });
     $steppyRoot = $dialogRoot.find('.box');
     $caption = $dialogRoot.find('.mod-fulldialog-caption');
     $steppyRoot.css({
@@ -222,7 +225,8 @@ $(function() {
       stepwidth: 300,
       widthbetween: 20,
       maxindex: 8,
-      triggerrefreshimmediately: false
+      triggerrefreshimmediately: false,
+      alwayspreventtouchmove: true
     });
     steppyInstance = $steppyRoot.data('touchdraghsteppy');
     steppyInstance.on('refresh indexchange', function() {

@@ -218,6 +218,7 @@ do ($=jQuery, window=window, document=document) ->
       beforefirstrefresh: null # fn
       triggerrefreshimmediately: true
       tweakinnerpositionstyle: false
+      alwayspreventtouchmove: false
 
     constructor: (@$el, options) ->
 
@@ -324,7 +325,7 @@ do ($=jQuery, window=window, document=document) ->
 
       @_currentDrag.applyTouchMove event
 
-      if @_shouldSlideInner
+      if @options.alwayspreventtouchmove or @_shouldSlideInner
         event.preventDefault()
         event.stopPropagation()
       return this

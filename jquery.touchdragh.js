@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-05-14
+ * lastupdate: 2013-05-17
  * version: 1.3.1
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -255,7 +255,8 @@
         backanim_easing: 'swing',
         beforefirstrefresh: null,
         triggerrefreshimmediately: true,
-        tweakinnerpositionstyle: false
+        tweakinnerpositionstyle: false,
+        alwayspreventtouchmove: false
       };
 
       function TouchdraghEl($el, options) {
@@ -385,7 +386,7 @@
           return this;
         }
         this._currentDrag.applyTouchMove(event);
-        if (this._shouldSlideInner) {
+        if (this.options.alwayspreventtouchmove || this._shouldSlideInner) {
           event.preventDefault();
           event.stopPropagation();
         }
