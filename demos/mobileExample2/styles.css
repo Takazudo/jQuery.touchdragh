@@ -1,0 +1,96 @@
+* {
+  margin:0;
+  padding:0;
+}
+a {
+  color:#00f;
+}
+button {
+  padding:4px;
+}
+body {
+  font-family:sans-serif;
+}
+.all {
+  padding:20px 10px;
+  overflow-x:hidden;
+}
+
+.box {
+  width:300px;
+  height:300px;
+  margin:0 auto;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+  cursor:move;
+  position:absolute;
+  visibility:hidden; /* make this visible via JS */
+}
+.box,
+.box * {
+  -webkit-touch-callout: none;
+  touch-callout: none;
+}
+  .box-inner {
+    position:absolute;
+    left:0;
+    top:0;
+    height:100%;
+    width:600px;
+  }
+    .item {
+      float:left;
+      height:100%;
+      width:300px;
+      font-size:100px;
+      text-align:center;
+      margin:0 0 0 20px;
+      background:#333;
+    }
+    .first {
+      margin-left:0;
+    }
+    .item img {
+      display:block;
+      margin:0 auto;
+    }
+.buttons {
+  text-align:center;
+}
+
+.ui-domwindowdialog {
+  background:#000;
+  color:#fff;
+  overflow:hidden;
+}
+  .ui-domwindowdialog a {
+    color:#fff;
+    text-decoration:none;
+  }
+
+.mod-fulldialog {
+  width:100%;
+  height:100%;
+  position:relative;
+  box-sizing:border-box;
+}
+  .mod-fulldialog-close {
+    position:absolute;
+    right:0;
+    top:0;
+    width:30px;
+    height:30px;
+    line-height:30px;
+    font-size:30px;
+  }
+  .mod-fulldialog-caption {
+    text-align:center;
+    color:#fff;
+    position:absolute;
+    left:0;
+    bottom:0;
+    right:0;
+    line-height:30px;
+  }
