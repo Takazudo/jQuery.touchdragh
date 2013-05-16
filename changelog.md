@@ -1,5 +1,9 @@
 # Change log
 
+## v1.3.2
+
+* added `alwayspreventtouchmove` option
+
 ## v1.3.1
 
 * touchdraghsteppy: implemented `updateOption` method.
