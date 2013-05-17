@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <title></title>
+<!--
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-->
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="stylesheet" href="domwindow.css">
 <link rel="stylesheet" href="styles.css">
 <script src="spin.js"></script>
@@ -109,21 +112,34 @@ $.fn.putOrAdjustImgInside = function(containerWidth, containerHeight) {
     var src = $el.attr('data-imgloader-src');
     var imgLoaded = $el.data('imgloaded') === true;
 
+    var placeSpinner = function() {
+      var options = {
+        color:'#fff',
+        width: 2,
+        lines: 15,
+        length: 12,
+        radius: 20
+      };
+      $el.empty();
+      (new Spinner(options)).spin($el[0]);
+    };
+
     var containerWH = {
       width: containerWidth,
       height: containerHeight
     };
+
+    if(!imgLoaded) {
+      placeSpinner();
+    }
+
     calcImgRectFitWH(src, containerWH, true).done(function(res) {
-      var $img;
-      if(imgLoaded) {
-        $img = $el.find('img');
-        if(!$img.length) {
-          return;
-        }
-      } else {
-        $img = res.$img;
-        $el.empty().append($img);
-      }
+      var $img = res.$img;
+      $el.empty();
+      // always refresh image because photos got bugged on iOS
+      setTimeout(function() {
+        $el.append($img);
+      }, 10);
       var mt;
       if(res.height < containerHeight) {
         mt = Math.floor((containerHeight / 2) - (res.height / 2));
