@@ -22,6 +22,9 @@ with [jquery.transit](http://ricostacruz.com/jquery.transit/)
 * touchdraghsteppy [demo](http://takazudo.github.io/jQuery.touchdragh/demos/transit3/)
 * touchdraghsteppy [mobileExample1](http://takazudo.github.io/jQuery.touchdragh/demos/mobileExample1/)
 
+misc
+
+* dragger option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/dragger/)
 
 ## Browsers
 

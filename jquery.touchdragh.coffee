@@ -219,18 +219,35 @@ do ($=jQuery, window=window, document=document) ->
       triggerrefreshimmediately: true
       tweakinnerpositionstyle: false
       alwayspreventtouchmove: false
+      dragger: null
+      useonlydragger: false
 
     constructor: (@$el, options) ->
 
       @el = @$el[0]
       @options = $.extend {}, @defaults, options
       @disabled = false
-      
+
+      @_prepareDraggers()
+
       ns.startWatchGestures()
       @_handlePointerEvents()
       @_prepareEls()
       @_eventify()
       @refresh() if @options.triggerrefreshimmediately
+
+    _prepareDraggers: ->
+
+      if @options.useonlydragger
+        @$draggers = $()
+      else
+        @$draggers = @$el
+
+      if @options.dragger
+        @$draggers = @$draggers.add $(@options.dragger)
+
+      return this
+      
 
     refresh: ->
       @_calcMinMaxLeft()
@@ -265,7 +282,7 @@ do ($=jQuery, window=window, document=document) ->
 
     _eventify: ->
       eventNames = 'pointerdown MSPointerDown touchstart mousedown'
-      @$el.bind eventNames, @_handleTouchStart
+      @$draggers.bind eventNames, @_handleTouchStart
       if ns.support.addEventListener
         @el.addEventListener 'click', $.noop , true
       return this
@@ -614,7 +631,7 @@ do ($=jQuery, window=window, document=document) ->
     _calcIndexFromCurrentSlideLeft: ->
 
       left = @_touchdragh.currentSlideLeft()
-
+      
       index = 0
       nextIndex = null
 

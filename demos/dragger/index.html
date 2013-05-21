@@ -1,0 +1,226 @@
+<!doctype html>
+<html class="no-js" lang="ja">
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles.css">
+<script src="../../libs/jquery/1.5.1/jquery.js"></script>
+<script src="../../jquery.touchdragh.js"></script>
+<script>
+$(function() {
+
+  $('#box1').touchdragh({
+    inner: '.box-inner',
+    dragger: '#box1dragger'
+  });
+
+  $('#box2').touchdragh({
+    inner: '.box-inner',
+    dragger: '#box2dragger',
+    useonlydragger: true
+  });
+
+  $('#box3').touchdragh({
+    inner: '.box-inner',
+    dragger: '#box3dragger',
+    useonlydragger: true
+  });
+
+  $('#box4').touchdraghfitty({
+    inner: '.fitty-inner',
+    item: '.fitty-item',
+    dragger: '#box4dragger'
+  });
+
+  $('#box5').touchdraghfitty({
+    inner: '.fitty-inner',
+    item: '.fitty-item',
+    dragger: '#box5dragger',
+    useonlydragger: true
+  });
+
+  $('#box6').touchdraghfitty({
+    inner: '.fitty-inner',
+    item: '.fitty-item',
+    dragger: '#box6dragger',
+    useonlydragger: true
+  });
+
+  $('#box7').touchdraghsteppy({
+    inner: '.steppy-inner',
+    item: '.steppy-item',
+    stepwidth: 300,
+    widthbetween: 20,
+    maxindex: 8,
+    dragger: '#box7dragger'
+  });
+
+  $('#box8').touchdraghsteppy({
+    inner: '.steppy-inner',
+    item: '.steppy-item',
+    stepwidth: 300,
+    widthbetween: 20,
+    maxindex: 8,
+    dragger: '#box8dragger',
+    useonlydragger: true
+  });
+
+  $('#box9').touchdraghsteppy({
+    inner: '.steppy-inner',
+    item: '.steppy-item',
+    stepwidth: 200,
+    widthbetween: 20,
+    maxindex: 8,
+    dragger: '#box9dragger',
+    useonlydragger: true
+  });
+
+
+});
+</script>
+</head>
+<body><div class="all">
+
+<h2>use another dragger</h2>
+
+<div class="box" id="box1">
+  <div class="box-inner">
+    THE QUICK BROWN FOX <img src="../imgs/1.jpg" alt="" width="60" height="60"> JUMPS OVER THE LAZY DOG.
+  </div>
+</div>
+
+<div id="box1dragger" class="dragger">dragger</div>
+
+<h2>use another dragger. don't use original.</h2>
+
+<div class="box" id="box2">
+  <div class="box-inner">
+    THE QUICK BROWN FOX <img src="../imgs/1.jpg" alt="" width="60" height="60"> JUMPS OVER THE LAZY DOG.
+  </div>
+</div>
+
+<div id="box2dragger" class="dragger">dragger</div>
+
+<h2>try wrap</h2>
+
+<div id="box3dragger">
+  dragger
+  <div class="box" id="box3">
+    <div class="box-inner">
+      THE QUICK BROWN FOX <img src="../imgs/1.jpg" alt="" width="60" height="60"> JUMPS OVER THE LAZY DOG.
+    </div>
+  </div>
+</div>
+
+<h2>fitty another dragger</h2>
+
+<div class="fitty" id="box4">
+  <div class="fitty-inner">
+    <div class="fitty-item">A</div>
+    <div class="fitty-item"><a href="http://example.com">B</a></div>
+    <div class="fitty-item"><img src="../imgs/1.jpg" alt=""></div>
+    <div class="fitty-item">D</div>
+    <div class="fitty-item">E</div>
+    <div class="fitty-item">F</div>
+    <div class="fitty-item">G</div>
+    <div class="fitty-item">H</div>
+    <div class="fitty-item">I</div>
+  </div>
+</div>
+
+<div id="box4dragger" class="dragger">dragger</div>
+
+<h2>fitty another dragger. don't use original</h2>
+
+<div class="fitty" id="box5">
+  <div class="fitty-inner">
+    <div class="fitty-item">A</div>
+    <div class="fitty-item"><a href="http://example.com">B</a></div>
+    <div class="fitty-item"><img src="../imgs/1.jpg" alt=""></div>
+    <div class="fitty-item">D</div>
+    <div class="fitty-item">E</div>
+    <div class="fitty-item">F</div>
+    <div class="fitty-item">G</div>
+    <div class="fitty-item">H</div>
+    <div class="fitty-item">I</div>
+  </div>
+</div>
+
+<div id="box5dragger" class="dragger">dragger</div>
+
+<h2>fitty wrap</h2>
+
+<div id="box6dragger">
+  <div class="fitty" id="box6">
+    <div class="fitty-inner">
+      <div class="fitty-item">A</div>
+      <div class="fitty-item"><a href="http://example.com">B</a></div>
+      <div class="fitty-item"><img src="../imgs/1.jpg" alt=""></div>
+      <div class="fitty-item">D</div>
+      <div class="fitty-item">E</div>
+      <div class="fitty-item">F</div>
+      <div class="fitty-item">G</div>
+      <div class="fitty-item">H</div>
+      <div class="fitty-item">I</div>
+    </div>
+  </div>
+</div>
+
+<h2>steppy another dragger</h2>
+
+<div class="steppy" id="box7">
+  <div class="steppy-inner">
+    <div class="steppy-item steppy-first">A</div>
+    <div class="steppy-item"><a href="http://example.com">B</a></div>
+    <div class="steppy-item"><img src="../imgs/1.jpg" alt=""></div>
+    <div class="steppy-item">D</div>
+    <div class="steppy-item">E</div>
+    <div class="steppy-item">F</div>
+    <div class="steppy-item">G</div>
+    <div class="steppy-item">H</div>
+    <div class="steppy-item">I</div>
+  </div>
+</div>
+
+<div id="box7dragger" class="dragger">dragger</div>
+
+<h2>steppy another dragger. don't use original</h2>
+
+<div class="steppy" id="box8">
+  <div class="steppy-inner">
+    <div class="steppy-item steppy-first">A</div>
+    <div class="steppy-item"><a href="http://example.com">B</a></div>
+    <div class="steppy-item"><img src="../imgs/1.jpg" alt=""></div>
+    <div class="steppy-item">D</div>
+    <div class="steppy-item">E</div>
+    <div class="steppy-item">F</div>
+    <div class="steppy-item">G</div>
+    <div class="steppy-item">H</div>
+    <div class="steppy-item">I</div>
+  </div>
+</div>
+
+<div id="box8dragger" class="dragger">dragger</div>
+
+<h2>steppy wrap</h2>
+
+<div id="box9dragger">
+  <div class="steppy" id="box9">
+    <div class="steppy-inner">
+      <div class="steppy-item steppy-first">A</div>
+      <div class="steppy-item"><a href="http://example.com">B</a></div>
+      <div class="steppy-item"><img src="../imgs/1.jpg" alt=""></div>
+      <div class="steppy-item">D</div>
+      <div class="steppy-item">E</div>
+      <div class="steppy-item">F</div>
+      <div class="steppy-item">G</div>
+      <div class="steppy-item">H</div>
+      <div class="steppy-item">I</div>
+    </div>
+  </div>
+</div>
+
+
+</div></body>
+</html>

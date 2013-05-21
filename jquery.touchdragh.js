@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-05-17
+ * lastupdate: 2013-05-21
  * version: 1.3.2
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -256,7 +256,9 @@
         beforefirstrefresh: null,
         triggerrefreshimmediately: true,
         tweakinnerpositionstyle: false,
-        alwayspreventtouchmove: false
+        alwayspreventtouchmove: false,
+        dragger: null,
+        useonlydragger: false
       };
 
       function TouchdraghEl($el, options) {
@@ -268,6 +270,7 @@
         this.el = this.$el[0];
         this.options = $.extend({}, this.defaults, options);
         this.disabled = false;
+        this._prepareDraggers();
         ns.startWatchGestures();
         this._handlePointerEvents();
         this._prepareEls();
@@ -276,6 +279,18 @@
           this.refresh();
         }
       }
+
+      TouchdraghEl.prototype._prepareDraggers = function() {
+        if (this.options.useonlydragger) {
+          this.$draggers = $();
+        } else {
+          this.$draggers = this.$el;
+        }
+        if (this.options.dragger) {
+          this.$draggers = this.$draggers.add($(this.options.dragger));
+        }
+        return this;
+      };
 
       TouchdraghEl.prototype.refresh = function() {
         this._calcMinMaxLeft();
@@ -324,7 +339,7 @@
       TouchdraghEl.prototype._eventify = function() {
         var eventNames;
         eventNames = 'pointerdown MSPointerDown touchstart mousedown';
-        this.$el.bind(eventNames, this._handleTouchStart);
+        this.$draggers.bind(eventNames, this._handleTouchStart);
         if (ns.support.addEventListener) {
           this.el.addEventListener('click', $.noop, true);
         }
