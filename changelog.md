@@ -1,5 +1,9 @@
 # Change log
 
+## v1.4.0
+
+* implemented `dragger` option
+
 ## v1.3.2
 
 * added `alwayspreventtouchmove` option
