@@ -37,6 +37,11 @@ misc
 * [EveEve](https://github.com/Takazudo/EveEve)
 * jQuery 1.9.1 (>= 1.5.1)
 
+## How to develop
+
+git clone, then `git submodule init`, `git submodule update`.  
+Then, `grunt` to build or `grunt watch` to watch coffee file's change.
+
 ## FAQ
 
 Q: Does this library use transform, css transition and css animations?
