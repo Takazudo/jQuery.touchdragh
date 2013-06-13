@@ -1,5 +1,9 @@
 # Change log
 
+## v1.5.0
+
+* used [EveEve](https://github.com/Takazudo/EveEve) as event emitter.
+
 ## v1.4.0
 
 * implemented `dragger` option
