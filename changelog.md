@@ -1,5 +1,9 @@
 # Change log
 
+## v1.6.0
+
+* implemented `forever` feature.
+
 ## v1.5.0
 
 * used [EveEve](https://github.com/Takazudo/EveEve) as event emitter.
