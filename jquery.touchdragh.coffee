@@ -173,6 +173,7 @@ do ($=jQuery, window=window, document=document) ->
       alwayspreventtouchmove: false
       dragger: null
       useonlydragger: false
+      forever: false
 
     constructor: (@$el, options) ->
 
@@ -228,8 +229,13 @@ do ($=jQuery, window=window, document=document) ->
       return this
     
     _calcMinMaxLeft: ->
-      @_maxLeft = 0
-      @_minLeft = -(@$inner.outerWidth() - @$el.innerWidth())
+      if @options.forever
+        # don't set min/max. it loops forever.
+        @_maxLeft = null
+        @_minLeft = null
+      else
+        @_maxLeft = 0
+        @_minLeft = -(@$inner.outerWidth() - @$el.innerWidth())
       return this
 
     _eventify: ->
@@ -327,10 +333,11 @@ do ($=jQuery, window=window, document=document) ->
       left = @_innerStartLeft + x
 
       # slow down if over
-      if (left > @_maxLeft)
-        left = @_maxLeft + ((left - @_maxLeft) / 3)
-      else if (left < @_minLeft)
-        left = @_minLeft + ((left - @_minLeft) / 3)
+      unless @_maxLeft is null
+        if (left > @_maxLeft)
+          left = @_maxLeft + ((left - @_maxLeft) / 3)
+        else if (left < @_minLeft)
+          left = @_minLeft + ((left - @_minLeft) / 3)
 
       if ns.transitionEnabled
         to = { x: left }
@@ -353,20 +360,25 @@ do ($=jQuery, window=window, document=document) ->
 
       left = @currentSlideLeft()
 
-      # check if left is over
-      overMax = left > @_maxLeft
-      belowMin = left < @_minLeft
-      unless overMax or belowMin
+      if @_maxLeft is null
         triggerEvent()
-        return this
 
-      # normalize left
-      to = @_maxLeft if overMax
-      to = @_minLeft if belowMin
+      else
 
-      # then do slide
-      @slide to, true, =>
-        triggerEvent()
+        # check if left is over
+        overMax = left > @_maxLeft
+        belowMin = left < @_minLeft
+        unless overMax or belowMin
+          triggerEvent()
+          return this
+
+        # normalize left
+        to = @_maxLeft if overMax
+        to = @_minLeft if belowMin
+
+        # then do slide
+        @slide to, true, =>
+          triggerEvent()
       
       return this
 
@@ -393,8 +405,9 @@ do ($=jQuery, window=window, document=document) ->
 
     slide: (val, animate=false, callback) ->
 
-      val = @_maxLeft if val > @_maxLeft
-      val = @_minLeft if val < @_minLeft
+      unless @_maxLeft is null
+        val = @_maxLeft if val > @_maxLeft
+        val = @_minLeft if val < @_minLeft
 
       d = @options.backanim_duration
       e = @options.backanim_easing
@@ -536,24 +549,108 @@ do ($=jQuery, window=window, document=document) ->
       return @to (@currentIndex - 1), animate
 
   # ============================================================
+  # ForeverInner
+
+  class ns.ForeverInner extends window.EveEve
+
+    defaults:
+      baseleft: null
+      stepwidth: null # pixel as number
+      widthbetween: null # pixel as number
+      forever_duplicate_count: 1
+
+    constructor:  (@$inner, @$inner2, options) ->
+      o = @options = $.extend {}, @defaults, options
+      l = (@$inner2.find o.selector_item).length
+      @origItemsCount = l
+      @baseIndex = l * o.forever_duplicate_count
+      @_duplicateInside()
+
+    handleIndexchange: (index) ->
+      offsetCount = null
+      if index < @baseIndex
+        i = -1
+        loop
+          from = @baseIndex + i * @origItemsCount
+          to = @baseIndex + (i+1) * @origItemsCount
+          if from <= index < to
+            offsetCount = i
+            break
+          i -= 1
+      if index >= @baseIndex
+        i = 0
+        loop
+          from = @baseIndex + i * @origItemsCount
+          to = @baseIndex + (i+1) * @origItemsCount
+          if from <= index < to
+            offsetCount = i
+            break
+          i += 1
+      @_changeLeftFromOffset offsetCount
+      @_handleInner2Width()
+      return this
+
+    _changeLeftFromOffset: (offsetCount) ->
+      o = @options
+      widthPerOffset = @origItemsCount * (o.stepwidth + o.widthbetween)
+      val = o.baseleft + offsetCount * widthPerOffset
+      @currentInner2Left = val
+      @$inner2.css 'left', val
+      return this
+
+    _handleInner2Width: ->
+      @$inner2.width @$inner.width() - @options.baseleft + 3
+
+    _duplicateInside: ->
+      src = @$inner2.html()
+      for [1..(@options.forever_duplicate_count * 2)]
+        @$inner2.append src
+      return this
+
+  # ============================================================
   # TouchdraghSteppy
 
   class ns.TouchdraghSteppy extends window.EveEve
     
     defaults:
       item: null # selector
+      inner: null # selector
+      inner2: null # selector
+      inner2left: -20 # left px value
       beforefirstfresh: null # fn
       startindex: 0
       maxindex: 0 # need to be specified
       triggerrefreshimmediately: true
       stepwidth: 300
       widthbetween: 0
+      forever: false
+      forever_duplicate_count: 1
 
     constructor: (@$el, options) ->
-      @options = $.extend {}, @defaults, options
-      @currentIndex = @options.startindex
+      o = @options = $.extend {}, @defaults, options
+      @currentIndex = o.startindex
+      @_setupForever()
       @_prepareTouchdragh()
-      @refresh() if @options.triggerrefreshimmediately
+      @refresh() if o.triggerrefreshimmediately
+
+      if o.forever
+        @to @_foreverInner.baseIndex + o.startindex # move to baseIndex
+        @on 'indexchange', (data) ->
+          @_foreverInner.handleIndexchange data.index
+
+    _setupForever: ->
+      o = @options
+      return this unless o.forever
+      options =
+        widthbetween: o.widthbetween
+        stepwidth: o.stepwidth
+        baseleft: o.inner2left
+        forever_duplicate_count: o.forever_duplicate_count
+        selector_item: o.item
+      $inner = @$el.find o.inner
+      $inner2 = @$el.find o.inner2
+      @_foreverInner = new ns.ForeverInner $inner, $inner2, options
+      return this
 
     _prepareTouchdragh: ->
       
@@ -574,7 +671,8 @@ do ($=jQuery, window=window, document=document) ->
         touchdragh.on 'dragend', => @trigger 'dragend'
 
         touchdragh.on 'moveend', =>
-          @updateIndex @_calcIndexFromCurrentSlideLeft()
+          index = @_calcIndexFromCurrentSlideLeft()
+          @updateIndex index
           @adjustToFit true
 
       @_touchdragh = new ns.TouchdraghEl @$el, options
@@ -583,7 +681,7 @@ do ($=jQuery, window=window, document=document) ->
     _calcIndexFromCurrentSlideLeft: ->
 
       left = @_touchdragh.currentSlideLeft()
-      
+
       index = 0
       nextIndex = null
 
@@ -591,26 +689,67 @@ do ($=jQuery, window=window, document=document) ->
       goingToPositive = false
       goingToNegative = false
 
-      while index <= @options.maxindex
-        maxLeft = @_calcLeftFromIndex index
-        minLeft = @_calcLeftFromIndex (index + 1)
-        halfLeft = minLeft + (maxLeft - minLeft) / 2
-        if minLeft <= left <= maxLeft
+      if @options.forever
 
-          if (left is minLeft) or (left is maxLeft)
-            onStepLine = true
+        if left is 0
+          onStepLine = true
+        if left < 0
+          loop
+            maxLeft = @_calcLeftFromIndex index
+            minLeft = @_calcLeftFromIndex (index + 1)
+            halfLeft = minLeft + (maxLeft - minLeft) / 2
+            if minLeft <= left <= maxLeft
+              if (left is minLeft) or (left is maxLeft)
+                onStepLine = true
+              if left >= halfLeft
+                nextIndex = index
+                goingToPositive = true
+              else
+                nextIndex = index + 1
+                goingToNegative = true
+            if nextIndex is null
+              index += 1
+            else
+              break
+            
+        if left > 0
+          loop
+            maxLeft = @_calcLeftFromIndex (index - 1)
+            minLeft = @_calcLeftFromIndex index
+            halfLeft = minLeft + (maxLeft - minLeft) / 2
+            if minLeft <= left <= maxLeft
+              if (left is minLeft) or (left is maxLeft)
+                onStepLine = true
+              if left >= halfLeft
+                nextIndex = index
+                goingToNegative = true
+              else
+                nextIndex = index - 1
+                goingToPositive = true
+            if nextIndex is null
+              index -= 1
+            else
+              break
 
-          if left >= halfLeft
-            nextIndex = index
-            goingToPositive = true
+      else
+
+        while index <= @options.maxindex
+          maxLeft = @_calcLeftFromIndex index
+          minLeft = @_calcLeftFromIndex (index + 1)
+          halfLeft = minLeft + (maxLeft - minLeft) / 2
+          if minLeft <= left <= maxLeft
+            if (left is minLeft) or (left is maxLeft)
+              onStepLine = true
+            if left >= halfLeft
+              nextIndex = index
+              goingToPositive = true
+            else
+              nextIndex = index + 1
+              goingToNegative = true
+          if nextIndex is null
+            index += 1
           else
-            nextIndex = index + 1
-            goingToNegative = true
-
-        if nextIndex is null
-          index += 1
-        else
-          break
+            break
 
       if (nextIndex is @currentIndex) and (not onStepLine)
         if goingToPositive
@@ -621,8 +760,9 @@ do ($=jQuery, window=window, document=document) ->
       return nextIndex
     
     updateIndex: (index) ->
-      unless 0 <= index <= @options.maxindex
-        return false
+      if @options.forever is false
+        unless 0 <= index <= @options.maxindex
+          return false
       lastIndex = @currentIndex
       @currentIndex = index
       if lastIndex isnt index
@@ -649,10 +789,18 @@ do ($=jQuery, window=window, document=document) ->
       betweenW = @options.widthbetween
       i = 0
       left = 0
-      while i < index
-        i += 1
-        left -= stepW
-        left -= betweenW unless i is 0
+      if index is 0
+        return 0
+      if index > 0
+        while i < index
+          i += 1
+          left -= stepW
+          left -= betweenW unless i is 0
+      if index < 0
+        while i > index
+          i -= 1
+          left += stepW
+          left += betweenW unless i is 0
       return left
 
     adjustToFit: (animate=false, callback) ->
@@ -696,7 +844,6 @@ do ($=jQuery, window=window, document=document) ->
       @refresh()
       return this
 
-
   # ============================================================
   # bridge to plugin
 
@@ -719,6 +866,13 @@ do ($=jQuery, window=window, document=document) ->
       $el = $(el)
       instance = new ns.TouchdraghSteppy $el, options
       $el.data 'touchdraghsteppy', instance
+      return
+
+  $.fn.touchdraghloopy = (options) ->
+    return @each (i, el) ->
+      $el = $(el)
+      instance = new ns.TouchdraghLoopy $el, options
+      $el.data 'touchdraghloopy', instance
       return
 
   $.Touchdragh = ns.TouchdraghEl

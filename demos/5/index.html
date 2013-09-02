@@ -38,6 +38,7 @@ $(function() {
     var $el = $(this);
     $el.touchdragh({
       inner: '.box-inner',
+      forever: true,
       beforefirstrefresh: function(instance) {
         $.each(eventNames, function(i, ev) {
           instance.on(ev, function() {
@@ -64,7 +65,7 @@ $(function() {
 </head>
 <body>
 
-<h1>touchdragh basic</h1>
+<h1>touchdragh forever option</h1>
 
 <div class="box" id="box1">
   <div class="box-inner">

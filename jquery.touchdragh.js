@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-06-13
+ * lastupdate: 2013-09-02
  * version: 1.5.0
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -184,7 +184,8 @@
         tweakinnerpositionstyle: false,
         alwayspreventtouchmove: false,
         dragger: null,
-        useonlydragger: false
+        useonlydragger: false,
+        forever: false
       };
 
       function TouchdraghEl($el, options) {
@@ -257,8 +258,13 @@
       };
 
       TouchdraghEl.prototype._calcMinMaxLeft = function() {
-        this._maxLeft = 0;
-        this._minLeft = -(this.$inner.outerWidth() - this.$el.innerWidth());
+        if (this.options.forever) {
+          this._maxLeft = null;
+          this._minLeft = null;
+        } else {
+          this._maxLeft = 0;
+          this._minLeft = -(this.$inner.outerWidth() - this.$el.innerWidth());
+        }
         return this;
       };
 
@@ -354,10 +360,12 @@
       TouchdraghEl.prototype._moveInner = function(x) {
         var data, left, to;
         left = this._innerStartLeft + x;
-        if (left > this._maxLeft) {
-          left = this._maxLeft + ((left - this._maxLeft) / 3);
-        } else if (left < this._minLeft) {
-          left = this._minLeft + ((left - this._minLeft) / 3);
+        if (this._maxLeft !== null) {
+          if (left > this._maxLeft) {
+            left = this._maxLeft + ((left - this._maxLeft) / 3);
+          } else if (left < this._minLeft) {
+            left = this._minLeft + ((left - this._minLeft) / 3);
+          }
         }
         if (ns.transitionEnabled) {
           to = {
@@ -392,21 +400,25 @@
         };
         to = null;
         left = this.currentSlideLeft();
-        overMax = left > this._maxLeft;
-        belowMin = left < this._minLeft;
-        if (!(overMax || belowMin)) {
+        if (this._maxLeft === null) {
           triggerEvent();
-          return this;
+        } else {
+          overMax = left > this._maxLeft;
+          belowMin = left < this._minLeft;
+          if (!(overMax || belowMin)) {
+            triggerEvent();
+            return this;
+          }
+          if (overMax) {
+            to = this._maxLeft;
+          }
+          if (belowMin) {
+            to = this._minLeft;
+          }
+          this.slide(to, true, function() {
+            return triggerEvent();
+          });
         }
-        if (overMax) {
-          to = this._maxLeft;
-        }
-        if (belowMin) {
-          to = this._minLeft;
-        }
-        this.slide(to, true, function() {
-          return triggerEvent();
-        });
         return this;
       };
 
@@ -443,11 +455,13 @@
         if (animate == null) {
           animate = false;
         }
-        if (val > this._maxLeft) {
-          val = this._maxLeft;
-        }
-        if (val < this._minLeft) {
-          val = this._minLeft;
+        if (this._maxLeft !== null) {
+          if (val > this._maxLeft) {
+            val = this._maxLeft;
+          }
+          if (val < this._minLeft) {
+            val = this._minLeft;
+          }
         }
         d = this.options.backanim_duration;
         e = this.options.backanim_easing;
@@ -671,29 +685,141 @@
       return TouchdraghFitty;
 
     })(window.EveEve);
+    ns.ForeverInner = (function(_super) {
+
+      __extends(ForeverInner, _super);
+
+      ForeverInner.prototype.defaults = {
+        baseleft: null,
+        stepwidth: null,
+        widthbetween: null,
+        forever_duplicate_count: 1
+      };
+
+      function ForeverInner($inner, $inner2, options) {
+        var l, o;
+        this.$inner = $inner;
+        this.$inner2 = $inner2;
+        o = this.options = $.extend({}, this.defaults, options);
+        l = (this.$inner2.find(o.selector_item)).length;
+        this.origItemsCount = l;
+        this.baseIndex = l * o.forever_duplicate_count;
+        this._duplicateInside();
+      }
+
+      ForeverInner.prototype.handleIndexchange = function(index) {
+        var from, i, offsetCount, to;
+        offsetCount = null;
+        if (index < this.baseIndex) {
+          i = -1;
+          while (true) {
+            from = this.baseIndex + i * this.origItemsCount;
+            to = this.baseIndex + (i + 1) * this.origItemsCount;
+            if ((from <= index && index < to)) {
+              offsetCount = i;
+              break;
+            }
+            i -= 1;
+          }
+        }
+        if (index >= this.baseIndex) {
+          i = 0;
+          while (true) {
+            from = this.baseIndex + i * this.origItemsCount;
+            to = this.baseIndex + (i + 1) * this.origItemsCount;
+            if ((from <= index && index < to)) {
+              offsetCount = i;
+              break;
+            }
+            i += 1;
+          }
+        }
+        this._changeLeftFromOffset(offsetCount);
+        this._handleInner2Width();
+        return this;
+      };
+
+      ForeverInner.prototype._changeLeftFromOffset = function(offsetCount) {
+        var o, val, widthPerOffset;
+        o = this.options;
+        widthPerOffset = this.origItemsCount * (o.stepwidth + o.widthbetween);
+        val = o.baseleft + offsetCount * widthPerOffset;
+        this.currentInner2Left = val;
+        this.$inner2.css('left', val);
+        return this;
+      };
+
+      ForeverInner.prototype._handleInner2Width = function() {
+        return this.$inner2.width(this.$inner.width() - this.options.baseleft + 3);
+      };
+
+      ForeverInner.prototype._duplicateInside = function() {
+        var src, _i, _ref;
+        src = this.$inner2.html();
+        for (_i = 1, _ref = this.options.forever_duplicate_count * 2; 1 <= _ref ? _i <= _ref : _i >= _ref; 1 <= _ref ? _i++ : _i--) {
+          this.$inner2.append(src);
+        }
+        return this;
+      };
+
+      return ForeverInner;
+
+    })(window.EveEve);
     ns.TouchdraghSteppy = (function(_super) {
 
       __extends(TouchdraghSteppy, _super);
 
       TouchdraghSteppy.prototype.defaults = {
         item: null,
+        inner: null,
+        inner2: null,
+        inner2left: -20,
         beforefirstfresh: null,
         startindex: 0,
         maxindex: 0,
         triggerrefreshimmediately: true,
         stepwidth: 300,
-        widthbetween: 0
+        widthbetween: 0,
+        forever: false,
+        forever_duplicate_count: 1
       };
 
       function TouchdraghSteppy($el, options) {
+        var o;
         this.$el = $el;
-        this.options = $.extend({}, this.defaults, options);
-        this.currentIndex = this.options.startindex;
+        o = this.options = $.extend({}, this.defaults, options);
+        this.currentIndex = o.startindex;
+        this._setupForever();
         this._prepareTouchdragh();
-        if (this.options.triggerrefreshimmediately) {
+        if (o.triggerrefreshimmediately) {
           this.refresh();
         }
+        if (o.forever) {
+          this.to(this._foreverInner.baseIndex + o.startindex);
+          this.on('indexchange', function(data) {
+            return this._foreverInner.handleIndexchange(data.index);
+          });
+        }
       }
+
+      TouchdraghSteppy.prototype._setupForever = function() {
+        var $inner, $inner2, o, options;
+        o = this.options;
+        if (!o.forever) {
+          return this;
+        }
+        options = {
+          widthbetween: o.widthbetween,
+          stepwidth: o.stepwidth,
+          baseleft: o.inner2left,
+          forever_duplicate_count: o.forever_duplicate_count,
+          selector_item: o.item
+        };
+        $inner = this.$el.find(o.inner);
+        $inner2 = this.$el.find(o.inner2);
+        this._foreverInner = new ns.ForeverInner($inner, $inner2, options);
+        return this;
+      };
 
       TouchdraghSteppy.prototype._prepareTouchdragh = function() {
         var options,
@@ -725,7 +851,9 @@
             return _this.trigger('dragend');
           });
           return touchdragh.on('moveend', function() {
-            _this.updateIndex(_this._calcIndexFromCurrentSlideLeft());
+            var index;
+            index = _this._calcIndexFromCurrentSlideLeft();
+            _this.updateIndex(index);
             return _this.adjustToFit(true);
           });
         };
@@ -741,26 +869,80 @@
         onStepLine = false;
         goingToPositive = false;
         goingToNegative = false;
-        while (index <= this.options.maxindex) {
-          maxLeft = this._calcLeftFromIndex(index);
-          minLeft = this._calcLeftFromIndex(index + 1);
-          halfLeft = minLeft + (maxLeft - minLeft) / 2;
-          if ((minLeft <= left && left <= maxLeft)) {
-            if ((left === minLeft) || (left === maxLeft)) {
-              onStepLine = true;
-            }
-            if (left >= halfLeft) {
-              nextIndex = index;
-              goingToPositive = true;
-            } else {
-              nextIndex = index + 1;
-              goingToNegative = true;
+        if (this.options.forever) {
+          if (left === 0) {
+            onStepLine = true;
+          }
+          if (left < 0) {
+            while (true) {
+              maxLeft = this._calcLeftFromIndex(index);
+              minLeft = this._calcLeftFromIndex(index + 1);
+              halfLeft = minLeft + (maxLeft - minLeft) / 2;
+              if ((minLeft <= left && left <= maxLeft)) {
+                if ((left === minLeft) || (left === maxLeft)) {
+                  onStepLine = true;
+                }
+                if (left >= halfLeft) {
+                  nextIndex = index;
+                  goingToPositive = true;
+                } else {
+                  nextIndex = index + 1;
+                  goingToNegative = true;
+                }
+              }
+              if (nextIndex === null) {
+                index += 1;
+              } else {
+                break;
+              }
             }
           }
-          if (nextIndex === null) {
-            index += 1;
-          } else {
-            break;
+          if (left > 0) {
+            while (true) {
+              maxLeft = this._calcLeftFromIndex(index - 1);
+              minLeft = this._calcLeftFromIndex(index);
+              halfLeft = minLeft + (maxLeft - minLeft) / 2;
+              if ((minLeft <= left && left <= maxLeft)) {
+                if ((left === minLeft) || (left === maxLeft)) {
+                  onStepLine = true;
+                }
+                if (left >= halfLeft) {
+                  nextIndex = index;
+                  goingToNegative = true;
+                } else {
+                  nextIndex = index - 1;
+                  goingToPositive = true;
+                }
+              }
+              if (nextIndex === null) {
+                index -= 1;
+              } else {
+                break;
+              }
+            }
+          }
+        } else {
+          while (index <= this.options.maxindex) {
+            maxLeft = this._calcLeftFromIndex(index);
+            minLeft = this._calcLeftFromIndex(index + 1);
+            halfLeft = minLeft + (maxLeft - minLeft) / 2;
+            if ((minLeft <= left && left <= maxLeft)) {
+              if ((left === minLeft) || (left === maxLeft)) {
+                onStepLine = true;
+              }
+              if (left >= halfLeft) {
+                nextIndex = index;
+                goingToPositive = true;
+              } else {
+                nextIndex = index + 1;
+                goingToNegative = true;
+              }
+            }
+            if (nextIndex === null) {
+              index += 1;
+            } else {
+              break;
+            }
           }
         }
         if ((nextIndex === this.currentIndex) && (!onStepLine)) {
@@ -775,8 +957,10 @@
 
       TouchdraghSteppy.prototype.updateIndex = function(index) {
         var data, lastIndex;
-        if (!((0 <= index && index <= this.options.maxindex))) {
-          return false;
+        if (this.options.forever === false) {
+          if (!((0 <= index && index <= this.options.maxindex))) {
+            return false;
+          }
         }
         lastIndex = this.currentIndex;
         this.currentIndex = index;
@@ -811,11 +995,25 @@
         betweenW = this.options.widthbetween;
         i = 0;
         left = 0;
-        while (i < index) {
-          i += 1;
-          left -= stepW;
-          if (i !== 0) {
-            left -= betweenW;
+        if (index === 0) {
+          return 0;
+        }
+        if (index > 0) {
+          while (i < index) {
+            i += 1;
+            left -= stepW;
+            if (i !== 0) {
+              left -= betweenW;
+            }
+          }
+        }
+        if (index < 0) {
+          while (i > index) {
+            i -= 1;
+            left += stepW;
+            if (i !== 0) {
+              left += betweenW;
+            }
           }
         }
         return left;
@@ -920,6 +1118,14 @@
         $el = $(el);
         instance = new ns.TouchdraghSteppy($el, options);
         $el.data('touchdraghsteppy', instance);
+      });
+    };
+    $.fn.touchdraghloopy = function(options) {
+      return this.each(function(i, el) {
+        var $el, instance;
+        $el = $(el);
+        instance = new ns.TouchdraghLoopy($el, options);
+        $el.data('touchdraghloopy', instance);
       });
     };
     $.Touchdragh = ns.TouchdraghEl;
