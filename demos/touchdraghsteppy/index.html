@@ -7,13 +7,32 @@
 <link rel="stylesheet" href="styles.css">
 <script src="../../EveEve/eveeve.js"></script>
 <script src="../../libs/jquery/1.5.1/jquery.js"></script>
-<script src="../../libs/jquery.transit.js"></script>
 <script src="../../jquery.touchdragh.js"></script>
 <script>
 $(function() {
 
   var console = window.console || {};
   console.log = console.log || $.noop;
+
+  var $button1 = $('#button1');
+  var $button2 = $('#button2');
+  var $button3 = $('#button3');
+  var $button4 = $('#button4');
+  var $button5 = $('#button5');
+  var $button6 = $('#button6');
+  var $button7 = $('#button7');
+
+  var eventNames = [
+    'firstrefresh',
+    'dragstart',
+    'drag',
+    'dragend',
+    'refresh',
+    'slidestart',
+    'slideend',
+    'slidecancel',
+    'invalidindexrequested'
+  ];
 
   $('.box').each(function() {
 
@@ -26,53 +45,35 @@ $(function() {
       item: '.item',
       stepwidth: 300,
       widthbetween: 20,
-			maxindex: 8,
+      maxindex: 8,
       beforefirstrefresh: function(ins) {
         instance = ins;
+        $.each(eventNames, function(i, ev) {
+          instance.on(ev, function() {
+            console.log(ev);
+          });
+        });
         instance.on('indexchange', function(data) {
           console.log('indexchange: ' + data.index);
         });
       }
     });
 
-    $('#toWide').click(function() {
-      $el.css({
-        width: 300,
-        height: 300
-      });
-      $el.find('.item').css({
-        width: 300,
-        marginLeft: 20
-      }).filter('.first').css({
-        marginLeft: 0
-      });
-      instance.updateOption({
-        stepwidth: 300,
-        widthbetween: 20
-      });
-    });
-    $('#toSmall').click(function() {
-      $el.css({
-        width: 200,
-        height: 200
-      });
-      $el.find('.item').css({
-        width: 200,
-        marginLeft: 15
-      }).filter('.first').css({
-        marginLeft: 0
-      });
-      instance.updateOption({
-        stepwidth: 200,
-        widthbetween: 15
-      });
-    });
+    $button1.click(function() { instance.prev(); });
+    $button2.click(function() { instance.next(true); });
+    $button3.click(function() { instance.to(0); });
+    $button4.click(function() { instance.to(0, true); });
+    $button5.click(function() { instance.to(5); });
+    $button6.click(function() { instance.to(5, true); });
+    $button7.click(function() { instance.to(9999); });
 
   });
 });
 </script>
 </head>
 <body><div class="all">
+
+<h1>TouchdraghSteppy demo</h1>
 
 <div class="box" id="box1">
   <div class="box-inner">
@@ -89,8 +90,13 @@ $(function() {
 </div>
 
 <div class="buttons">
-  <button id="toSmall">small</button>
-  <button id="toWide">wide</button>
+  <button id="button1">.prev()</button>
+  <button id="button2">.next(true)</button>
+  <button id="button3">.to(0)</button>
+  <button id="button4">.to(0, true)</button>
+  <button id="button5">.to(5)</button>
+  <button id="button6">.to(5, true)</button>
+  <button id="button7">.to(9999)</button>
 </div>
 
 </div></body>

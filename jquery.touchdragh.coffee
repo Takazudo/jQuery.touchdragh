@@ -868,13 +868,6 @@ do ($=jQuery, window=window, document=document) ->
       $el.data 'touchdraghsteppy', instance
       return
 
-  $.fn.touchdraghloopy = (options) ->
-    return @each (i, el) ->
-      $el = $(el)
-      instance = new ns.TouchdraghLoopy $el, options
-      $el.data 'touchdraghloopy', instance
-      return
-
   $.Touchdragh = ns.TouchdraghEl
   $.TouchdraghFitty = ns.TouchdraghFitty
 

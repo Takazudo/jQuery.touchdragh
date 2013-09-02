@@ -10,23 +10,31 @@ button {
 }
 body {
   font-family:sans-serif;
+  text-align:center;
 }
 .all {
   padding:20px 10px;
   overflow-x:hidden;
 }
+h1 {
+  padding:0 0 20px;
+}
+
 
 .box {
   width:300px;
   height:300px;
+  background:#333;
   margin:0 auto;
   -webkit-user-select:none;
   -moz-user-select:none;
   -ms-user-select:none;
   user-select:none;
   cursor:move;
-  position:absolute;
-  visibility:hidden; /* make this visible via JS */
+  margin:0 auto 20px;
+  position:relative;
+  border-top:3px solid blue;
+  border-bottom:3px solid blue;
 }
 .box,
 .box * {
@@ -47,50 +55,23 @@ body {
       font-size:100px;
       text-align:center;
       margin:0 0 0 20px;
-      background:#333;
     }
     .first {
       margin-left:0;
     }
+    .item:nth-child(even) {
+      background:#f00;
+      color:#ddd;
+    }
+    .item:nth-child(odd) {
+      background:#ddd;
+      color:#f00;
+    }
     .item img {
+      width:100%;
+      height:100%;
       display:block;
-      margin:0 auto;
     }
 .buttons {
   text-align:center;
 }
-
-.ui-domwindowdialog {
-  background:#000;
-  color:#fff;
-  overflow:hidden;
-}
-  .ui-domwindowdialog a {
-    color:#fff;
-    text-decoration:none;
-  }
-
-.mod-fulldialog {
-  width:100%;
-  height:100%;
-  position:relative;
-  box-sizing:border-box;
-}
-  .mod-fulldialog-close {
-    position:absolute;
-    right:0;
-    top:0;
-    width:30px;
-    height:30px;
-    line-height:30px;
-    font-size:30px;
-  }
-  .mod-fulldialog-caption {
-    text-align:center;
-    color:#fff;
-    position:absolute;
-    left:0;
-    bottom:0;
-    right:0;
-    line-height:30px;
-  }

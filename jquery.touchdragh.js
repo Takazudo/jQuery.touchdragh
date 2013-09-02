@@ -1120,14 +1120,6 @@
         $el.data('touchdraghsteppy', instance);
       });
     };
-    $.fn.touchdraghloopy = function(options) {
-      return this.each(function(i, el) {
-        var $el, instance;
-        $el = $(el);
-        instance = new ns.TouchdraghLoopy($el, options);
-        $el.data('touchdraghloopy', instance);
-      });
-    };
     $.Touchdragh = ns.TouchdraghEl;
     return $.TouchdraghFitty = ns.TouchdraghFitty;
   })(jQuery, window, document);

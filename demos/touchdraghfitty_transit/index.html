@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="styles.css">
 <script src="../../EveEve/eveeve.js"></script>
 <script src="../../libs/jquery/1.5.1/jquery.js"></script>
+<script src="../../libs/jquery.transit.js"></script>
 <script src="../../jquery.touchdragh.js"></script>
 <script>
 $(function() {
@@ -34,20 +35,16 @@ $(function() {
     'invalidindexrequested'
   ];
 
-  $('#box1').each(function() {
+  $('.box').each(function() {
 
     var instance;
 
     var $el = $(this);
 
-    $el.touchdraghsteppy({
+    $el.touchdraghfitty({
       inner: '.box-inner',
-      inner2: '.box-inner2',
       item: '.item',
-      stepwidth: 300,
-      widthbetween: 20,
-      forever: true,
-      forever_duplicate_count: 1,
+      triggerrefreshimmediately: false,
       beforefirstrefresh: function(ins) {
         instance = ins;
         $.each(eventNames, function(i, ev) {
@@ -61,6 +58,16 @@ $(function() {
       }
     });
 
+    instance = $el.data('touchdraghfitty');
+
+    function update() {
+      instance.refresh();
+      $el.height($el.width());
+    }
+
+    $(window).bind('resize', update);
+    update();
+
     $button1.click(function() { instance.prev(); });
     $button2.click(function() { instance.next(true); });
     $button3.click(function() { instance.to(0); });
@@ -70,54 +77,26 @@ $(function() {
     $button7.click(function() { instance.to(9999); });
 
   });
-
-  $('#box2').touchdraghsteppy({
-    inner: '.box-inner',
-    inner2: '.box-inner2',
-    item: '.item',
-    stepwidth: 300,
-    widthbetween: 20,
-    forever: true,
-    forever_duplicate_count: 2
-  });
-
-  $('#box3').touchdraghsteppy({
-    inner: '.box-inner',
-    inner2: '.box-inner2',
-    item: '.item',
-    stepwidth: 300,
-    widthbetween: 20,
-    forever: true,
-    forever_duplicate_count: 3
-  });
-
 });
 </script>
 </head>
-<body><div class="all">
+<body>
 
-<h1>TouchdraghSteppy<br>forever option demo</h1>
-<p>`forever` option allows the UI to loop forever. Zoom out and check what each differs.</p>
-
-<hr>
-
-<h2>forever_duplicate_count: 1<br>test with methods</h2>
-<p>It duplicates 1 items set for each back and front.</p>
+<h1>touchdraghfitty</h1>
+<p>transition.</p>
 
 <div class="box" id="box1">
-  <div class="box-inner"><div class="box-inner2">
-    <div class="item">A</div>
-    <div class="item"><a href="http://example.com">B</a></div>
-    <!--
-    <div class="item"><img src="../imgs/1.jpg" alt=""></div>
-    <div class="item">D</div>
-    <div class="item">E</div>
-    <div class="item">F</div>
-    <div class="item">G</div>
-    <div class="item">H</div>
-    <div class="item">I</div>
-    -->
-  </div></div>
+  <div class="box-inner">
+		<div class="item">A</div>
+		<div class="item"><a href="http://example.com">B</a></div>
+		<div class="item"><img src="../imgs/1.jpg" alt=""></div>
+		<div class="item">D</div>
+		<div class="item">E</div>
+		<div class="item">F</div>
+		<div class="item">G</div>
+		<div class="item">H</div>
+		<div class="item">I</div>
+  </div>
 </div>
 
 <div class="buttons">
@@ -130,26 +109,5 @@ $(function() {
   <button id="button7">.to(9999)</button>
 </div>
 
-<h2>forever_duplicate_count: 2</h2>
-<p>It duplicates 2 items set for each back and front.</p>
-
-<div class="box" id="box2">
-  <div class="box-inner"><div class="box-inner2">
-    <div class="item">A</div>
-    <div class="item"><a href="http://example.com">B</a></div>
-  </div></div>
-</div>
-
-<h2>forever_duplicate_count: 3</h2>
-<p>It duplicates 3 items set for each back and front.</p>
-
-<div class="box" id="box3">
-  <div class="box-inner"><div class="box-inner2">
-    <div class="item">A</div>
-    <div class="item"><a href="http://example.com">B</a></div>
-  </div></div>
-</div>
-
-
-</div></body>
+</body>
 </html>

@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="styles.css">
 <script src="../../EveEve/eveeve.js"></script>
 <script src="../../libs/jquery/1.5.1/jquery.js"></script>
+<script src="../../libs/jquery.transit.js"></script>
 <script src="../../jquery.touchdragh.js"></script>
 <script>
 $(function() {
@@ -43,9 +44,9 @@ $(function() {
     $el.touchdraghsteppy({
       inner: '.box-inner',
       item: '.item',
-      stepwidth: 140,
+      stepwidth: 300,
       widthbetween: 20,
-			maxindex: 8,
+      maxindex: 8,
       beforefirstrefresh: function(ins) {
         instance = ins;
         $.each(eventNames, function(i, ev) {
@@ -72,6 +73,8 @@ $(function() {
 </script>
 </head>
 <body><div class="all">
+
+<h1>TouchdraghSteppy transition demo</h1>
 
 <div class="box" id="box1">
   <div class="box-inner">

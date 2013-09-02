@@ -9,19 +9,16 @@ button {
   padding:4px;
 }
 body {
+  padding:20px 16px;
   font-family:sans-serif;
-}
-.all {
-  padding:20px 10px;
-  overflow-x:hidden;
+  text-align:center;
 }
 
 .box {
-  width:300px;
-  height:300px;
+  width:100%;
+  height:200px;
   max-width:600px;
   background:#333;
-  margin:0 auto;
   -webkit-user-select:none;
   -moz-user-select:none;
   -ms-user-select:none;
@@ -29,31 +26,21 @@ body {
   cursor:move;
   margin:0 auto 20px;
   position:relative;
-  border-top:3px solid blue;
-  border-bottom:3px solid blue;
-}
-.box,
-.box * {
-  -webkit-touch-callout: none;
-  touch-callout: none;
+  overflow:hidden;
 }
   .box-inner {
     position:absolute;
     left:0;
     top:0;
     height:100%;
+    background:#eee;
     width:600px;
   }
     .item {
       float:left;
       height:100%;
-      width:140px;
       font-size:100px;
       text-align:center;
-      margin:0 0 0 20px;
-    }
-    .first {
-      margin-left:0;
     }
     .item:nth-child(even) {
       background:#f00;
