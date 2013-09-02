@@ -9,20 +9,17 @@ See demos.
 
 ## Demos
 
-standard
+* touchdragh [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdragh/)
+* touchdragh with transition [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdragh_transit/)
+* touchdragh forever option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdragh_forever/)
 
-* touchdragh [demo](http://takazudo.github.io/jQuery.touchdragh/demos/1/)
-* touchdraghfitty [demo](http://takazudo.github.io/jQuery.touchdragh/demos/2/)
+* touchdraghfitty [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghfitty/)
+* touchdraghfitty with transition [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghfitty_transit/)
+
 * touchdraghsteppy [demo](http://takazudo.github.io/jQuery.touchdragh/demos/3/)
-
-with [jquery.transit](http://ricostacruz.com/jquery.transit/)
-
-* touchdragh [demo](http://takazudo.github.io/jQuery.touchdragh/demos/transit1/)
-* touchdraghfitty [demo](http://takazudo.github.io/jQuery.touchdragh/demos/transit2/)
-* touchdraghsteppy [demo](http://takazudo.github.io/jQuery.touchdragh/demos/transit3/)
-* touchdraghsteppy [mobileExample1](http://takazudo.github.io/jQuery.touchdragh/demos/mobileExample1/)
-
-misc
+* touchdraghsteppy with transition [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_transit/)
+* touchdraghsteppy refresh method [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_refresh/)
+* touchdraghsteppy forever option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_forever/)
 
 * dragger option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/dragger/)
 
@@ -36,6 +33,7 @@ misc
 
 * [EveEve](https://github.com/Takazudo/EveEve)
 * jQuery 1.9.1 (>= 1.5.1)
+* [jquery.transit](http://ricostacruz.com/jquery.transit/) - if you want to use transition.
 
 ## How to develop
 
