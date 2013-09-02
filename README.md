@@ -12,15 +12,12 @@ See demos.
 * touchdragh [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdragh/)
 * touchdragh with transition [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdragh_transit/)
 * touchdragh forever option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdragh_forever/)
-
 * touchdraghfitty [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghfitty/)
 * touchdraghfitty with transition [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghfitty_transit/)
-
 * touchdraghsteppy [demo](http://takazudo.github.io/jQuery.touchdragh/demos/3/)
 * touchdraghsteppy with transition [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_transit/)
 * touchdraghsteppy refresh method [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_refresh/)
 * touchdraghsteppy forever option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_forever/)
-
 * dragger option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/dragger/)
 
 ## Browsers
