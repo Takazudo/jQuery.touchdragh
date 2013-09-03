@@ -862,70 +862,53 @@
       };
 
       TouchdraghSteppy.prototype._calcIndexFromCurrentSlideLeft = function() {
-        var goingToNegative, goingToPositive, halfLeft, index, left, maxLeft, minLeft, nextIndex, onStepLine;
+        var goingToNegative, goingToPositive, handleNegativeLeft, handlePositiveLeft, index, left, nextIndex, onStepLine,
+          _this = this;
         left = this._touchdragh.currentSlideLeft();
         index = 0;
         nextIndex = null;
         onStepLine = false;
         goingToPositive = false;
         goingToNegative = false;
-        if (this.options.forever) {
-          if (left === 0) {
-            onStepLine = true;
-          }
-          if (left < 0) {
-            while (true) {
-              maxLeft = this._calcLeftFromIndex(index);
-              minLeft = this._calcLeftFromIndex(index + 1);
-              halfLeft = minLeft + (maxLeft - minLeft) / 2;
-              if ((minLeft <= left && left <= maxLeft)) {
-                if ((left === minLeft) || (left === maxLeft)) {
-                  onStepLine = true;
-                }
-                if (left >= halfLeft) {
-                  nextIndex = index;
-                  goingToPositive = true;
-                } else {
-                  nextIndex = index + 1;
-                  goingToNegative = true;
-                }
+        handlePositiveLeft = function() {
+          var halfLeft, maxLeft, minLeft, _results;
+          _results = [];
+          while (true) {
+            minLeft = _this._calcLeftFromIndex(index);
+            maxLeft = _this._calcLeftFromIndex(index - 1);
+            halfLeft = minLeft + (maxLeft - minLeft - _this.options.widthbetween) / 2;
+            console.log(minLeft, maxLeft, halfLeft);
+            if ((minLeft <= left && left <= maxLeft)) {
+              if ((left === minLeft) || (left === maxLeft)) {
+                onStepLine = true;
               }
-              if (nextIndex === null) {
-                index += 1;
+              if (left >= halfLeft) {
+                nextIndex = index - 1;
+                goingToPositive = true;
               } else {
-                break;
+                nextIndex = index;
+                goingToNegative = true;
               }
             }
-          }
-          if (left > 0) {
-            while (true) {
-              maxLeft = this._calcLeftFromIndex(index - 1);
-              minLeft = this._calcLeftFromIndex(index);
-              halfLeft = minLeft + (maxLeft - minLeft) / 2;
-              if ((minLeft <= left && left <= maxLeft)) {
-                if ((left === minLeft) || (left === maxLeft)) {
-                  onStepLine = true;
-                }
-                if (left >= halfLeft) {
-                  nextIndex = index;
-                  goingToNegative = true;
-                } else {
-                  nextIndex = index - 1;
-                  goingToPositive = true;
-                }
-              }
-              if (nextIndex === null) {
-                index -= 1;
-              } else {
-                break;
-              }
+            if (nextIndex === null) {
+              _results.push(index -= 1);
+            } else {
+              break;
             }
           }
-        } else {
-          while (index <= this._maxindex) {
-            maxLeft = this._calcLeftFromIndex(index);
-            minLeft = this._calcLeftFromIndex(index + 1);
-            halfLeft = minLeft + (maxLeft - minLeft) / 2;
+          return _results;
+        };
+        handleNegativeLeft = function() {
+          var halfLeft, maxLeft, minLeft, _results;
+          _results = [];
+          while (true) {
+            if ((!_this.options.forever) && (index > _this._maxindex)) {
+              break;
+            }
+            minLeft = _this._calcLeftFromIndex(index + 1);
+            maxLeft = _this._calcLeftFromIndex(index);
+            halfLeft = minLeft + (maxLeft - minLeft + _this.options.widthbetween) / 2;
+            console.log(minLeft, maxLeft, halfLeft);
             if ((minLeft <= left && left <= maxLeft)) {
               if ((left === minLeft) || (left === maxLeft)) {
                 onStepLine = true;
@@ -939,11 +922,25 @@
               }
             }
             if (nextIndex === null) {
-              index += 1;
+              _results.push(index += 1);
             } else {
               break;
             }
           }
+          return _results;
+        };
+        if (this.options.forever) {
+          if (left === 0) {
+            onStepLine = true;
+          }
+          if (left < 0) {
+            handleNegativeLeft();
+          }
+          if (left > 0) {
+            handlePositiveLeft();
+          }
+        } else {
+          handleNegativeLeft();
         }
         if ((nextIndex === this.currentIndex) && (!onStepLine)) {
           if (goingToPositive) {

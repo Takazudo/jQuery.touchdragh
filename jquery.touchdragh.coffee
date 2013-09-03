@@ -689,54 +689,36 @@ do ($=jQuery, window=window, document=document) ->
       goingToPositive = false
       goingToNegative = false
 
-      if @options.forever
+      # caliculation strategies
 
-        if left is 0
-          onStepLine = true
-        if left < 0
-          loop
-            maxLeft = @_calcLeftFromIndex index
-            minLeft = @_calcLeftFromIndex (index + 1)
-            halfLeft = minLeft + (maxLeft - minLeft) / 2
-            if minLeft <= left <= maxLeft
-              if (left is minLeft) or (left is maxLeft)
-                onStepLine = true
-              if left >= halfLeft
-                nextIndex = index
-                goingToPositive = true
-              else
-                nextIndex = index + 1
-                goingToNegative = true
-            if nextIndex is null
-              index += 1
+      handlePositiveLeft = =>
+        loop
+          minLeft = @_calcLeftFromIndex index
+          maxLeft = @_calcLeftFromIndex (index - 1)
+          halfLeft = minLeft + (maxLeft - minLeft - @options.widthbetween) / 2
+          console.log minLeft, maxLeft, halfLeft
+          if minLeft <= left <= maxLeft
+            if (left is minLeft) or (left is maxLeft)
+              onStepLine = true
+            if left >= halfLeft
+              nextIndex = index - 1
+              goingToPositive = true
             else
-              break
-            
-        if left > 0
-          loop
-            maxLeft = @_calcLeftFromIndex (index - 1)
-            minLeft = @_calcLeftFromIndex index
-            halfLeft = minLeft + (maxLeft - minLeft) / 2
-            if minLeft <= left <= maxLeft
-              if (left is minLeft) or (left is maxLeft)
-                onStepLine = true
-              if left >= halfLeft
-                nextIndex = index
-                goingToNegative = true
-              else
-                nextIndex = index - 1
-                goingToPositive = true
-            if nextIndex is null
-              index -= 1
-            else
-              break
+              nextIndex = index
+              goingToNegative = true
+          if nextIndex is null
+            index -= 1
+          else
+            break
 
-      else
-
-        while index <= @_maxindex
-          maxLeft = @_calcLeftFromIndex index
+      handleNegativeLeft = =>
+        loop
+          if (not @options.forever) and (index > @_maxindex)
+            break
           minLeft = @_calcLeftFromIndex (index + 1)
-          halfLeft = minLeft + (maxLeft - minLeft) / 2
+          maxLeft = @_calcLeftFromIndex index
+          halfLeft = minLeft + (maxLeft - minLeft + @options.widthbetween) / 2
+          console.log minLeft, maxLeft, halfLeft
           if minLeft <= left <= maxLeft
             if (left is minLeft) or (left is maxLeft)
               onStepLine = true
@@ -751,6 +733,21 @@ do ($=jQuery, window=window, document=document) ->
           else
             break
 
+      # choose which strategy to use
+
+      if @options.forever
+        if left is 0
+          onStepLine = true
+        if left < 0
+          handleNegativeLeft()
+        if left > 0
+          handlePositiveLeft()
+      else
+        handleNegativeLeft()
+
+      # if index was not changed but some drag was occured,
+      # let it slide
+            
       if (nextIndex is @currentIndex) and (not onStepLine)
         if goingToPositive
           nextIndex += 1
