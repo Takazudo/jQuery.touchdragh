@@ -696,7 +696,6 @@ do ($=jQuery, window=window, document=document) ->
           minLeft = @_calcLeftFromIndex index
           maxLeft = @_calcLeftFromIndex (index - 1)
           halfLeft = minLeft + (maxLeft - minLeft - @options.widthbetween) / 2
-          console.log minLeft, maxLeft, halfLeft
           if minLeft <= left <= maxLeft
             if (left is minLeft) or (left is maxLeft)
               onStepLine = true
@@ -718,7 +717,6 @@ do ($=jQuery, window=window, document=document) ->
           minLeft = @_calcLeftFromIndex (index + 1)
           maxLeft = @_calcLeftFromIndex index
           halfLeft = minLeft + (maxLeft - minLeft + @options.widthbetween) / 2
-          console.log minLeft, maxLeft, halfLeft
           if minLeft <= left <= maxLeft
             if (left is minLeft) or (left is maxLeft)
               onStepLine = true

@@ -877,7 +877,6 @@
             minLeft = _this._calcLeftFromIndex(index);
             maxLeft = _this._calcLeftFromIndex(index - 1);
             halfLeft = minLeft + (maxLeft - minLeft - _this.options.widthbetween) / 2;
-            console.log(minLeft, maxLeft, halfLeft);
             if ((minLeft <= left && left <= maxLeft)) {
               if ((left === minLeft) || (left === maxLeft)) {
                 onStepLine = true;
@@ -908,7 +907,6 @@
             minLeft = _this._calcLeftFromIndex(index + 1);
             maxLeft = _this._calcLeftFromIndex(index);
             halfLeft = minLeft + (maxLeft - minLeft + _this.options.widthbetween) / 2;
-            console.log(minLeft, maxLeft, halfLeft);
             if ((minLeft <= left && left <= maxLeft)) {
               if ((left === minLeft) || (left === maxLeft)) {
                 onStepLine = true;

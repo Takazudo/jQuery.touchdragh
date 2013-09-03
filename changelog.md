@@ -1,5 +1,9 @@
 # Change log
 
+## v1.6.3
+
+* removed console.log s
+
 ## v1.6.2
 
 * Fixed: wrong left value caliculation
