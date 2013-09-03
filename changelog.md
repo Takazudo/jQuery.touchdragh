@@ -1,5 +1,9 @@
 # Change log
 
+## v1.6.1
+
+* allowed `'auto'` val to `maxindex` option.
+
 ## v1.6.0
 
 * implemented `forever` feature.

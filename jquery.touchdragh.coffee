@@ -619,7 +619,7 @@ do ($=jQuery, window=window, document=document) ->
       inner2left: -20 # left px value
       beforefirstfresh: null # fn
       startindex: 0
-      maxindex: 0 # need to be specified
+      maxindex: 'auto' # 'auto' or number
       triggerrefreshimmediately: true
       stepwidth: 300
       widthbetween: 0
@@ -733,7 +733,7 @@ do ($=jQuery, window=window, document=document) ->
 
       else
 
-        while index <= @options.maxindex
+        while index <= @_maxindex
           maxLeft = @_calcLeftFromIndex index
           minLeft = @_calcLeftFromIndex (index + 1)
           halfLeft = minLeft + (maxLeft - minLeft) / 2
@@ -761,7 +761,7 @@ do ($=jQuery, window=window, document=document) ->
     
     updateIndex: (index) ->
       if @options.forever is false
-        unless 0 <= index <= @options.maxindex
+        unless 0 <= index <= @_maxindex
           return false
       lastIndex = @currentIndex
       @currentIndex = index
@@ -774,6 +774,10 @@ do ($=jQuery, window=window, document=document) ->
     refresh: ->
       @$items = @$el.find @options.item
       l = @$items.length
+      if @options.maxindex is 'auto'
+        @_maxindex = l - 1
+      else
+        @_maxindex = @options.maxindex
       stepW = @options.stepwidth
       innerW = stepW * l
       if l > 0

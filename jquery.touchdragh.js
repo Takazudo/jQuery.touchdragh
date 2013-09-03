@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-09-02
+ * lastupdate: 2013-09-03
  * version: 1.6.0
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -776,7 +776,7 @@
         inner2left: -20,
         beforefirstfresh: null,
         startindex: 0,
-        maxindex: 0,
+        maxindex: 'auto',
         triggerrefreshimmediately: true,
         stepwidth: 300,
         widthbetween: 0,
@@ -922,7 +922,7 @@
             }
           }
         } else {
-          while (index <= this.options.maxindex) {
+          while (index <= this._maxindex) {
             maxLeft = this._calcLeftFromIndex(index);
             minLeft = this._calcLeftFromIndex(index + 1);
             halfLeft = minLeft + (maxLeft - minLeft) / 2;
@@ -958,7 +958,7 @@
       TouchdraghSteppy.prototype.updateIndex = function(index) {
         var data, lastIndex;
         if (this.options.forever === false) {
-          if (!((0 <= index && index <= this.options.maxindex))) {
+          if (!((0 <= index && index <= this._maxindex))) {
             return false;
           }
         }
@@ -977,6 +977,11 @@
         var innerW, l, stepW;
         this.$items = this.$el.find(this.options.item);
         l = this.$items.length;
+        if (this.options.maxindex === 'auto') {
+          this._maxindex = l - 1;
+        } else {
+          this._maxindex = this.options.maxindex;
+        }
         stepW = this.options.stepwidth;
         innerW = stepW * l;
         if (l > 0) {
