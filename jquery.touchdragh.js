@@ -773,7 +773,7 @@
         item: null,
         inner: null,
         inner2: null,
-        inner2left: -20,
+        inner2left: 0,
         beforefirstfresh: null,
         startindex: 0,
         maxindex: 'auto',

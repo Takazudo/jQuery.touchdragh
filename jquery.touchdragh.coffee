@@ -616,7 +616,7 @@ do ($=jQuery, window=window, document=document) ->
       item: null # selector
       inner: null # selector
       inner2: null # selector
-      inner2left: -20 # left px value
+      inner2left: 0 # left px value
       beforefirstfresh: null # fn
       startindex: 0
       maxindex: 'auto' # 'auto' or number
