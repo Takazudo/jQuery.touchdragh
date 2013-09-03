@@ -1,5 +1,10 @@
 # Change log
 
+## v1.6.2
+
+* Fixed: wrong left value caliculation
+* Fixed: some option values were concrete for demos
+
 ## v1.6.1
 
 * allowed `'auto'` val to `maxindex` option.
