@@ -1,5 +1,9 @@
 # Change log
 
+## v1.6.4
+
+* implemented `normalize_height` feature
+
 ## v1.6.3
 
 * removed console.log s
