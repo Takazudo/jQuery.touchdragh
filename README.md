@@ -18,6 +18,7 @@ See demos.
 * touchdraghsteppy with transition [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_transit/)
 * touchdraghsteppy refresh method [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_refresh/)
 * touchdraghsteppy forever option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_forever/)
+* touchdraghsteppy normalize_height option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_normalizeheight/)
 * dragger option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/dragger/)
 
 ## Browsers
