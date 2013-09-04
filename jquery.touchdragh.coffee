@@ -1,6 +1,7 @@
 # encapsulate plugin
 do ($=jQuery, window=window, document=document) ->
 
+  $window = $(window)
   $document = $(document)
 
   ns = $.TouchdraghNs = {}
@@ -24,6 +25,17 @@ do ($=jQuery, window=window, document=document) ->
       res.y = event.pageY or orig.pageY
 
     return res
+
+  # ============================================================
+  # calcHighestHeight
+  
+  ns.calcHighestHeight = ($els) ->
+    highest = 0
+    $els.each (i, el) ->
+      h = $(el).outerHeight()
+      if h > highest
+        highest = h
+    return highest
 
   # ============================================================
   # detect / normalize event names
@@ -625,6 +637,8 @@ do ($=jQuery, window=window, document=document) ->
       widthbetween: 0
       forever: false
       forever_duplicate_count: 1
+      normalize_height: false
+      normalize_height_on_resize: false
 
     constructor: (@$el, options) ->
       o = @options = $.extend {}, @defaults, options
@@ -632,11 +646,16 @@ do ($=jQuery, window=window, document=document) ->
       @_setupForever()
       @_prepareTouchdragh()
       @refresh() if o.triggerrefreshimmediately
+      @_eventify()
 
       if o.forever
         @to @_foreverInner.baseIndex + o.startindex # move to baseIndex
         @on 'indexchange', (data) ->
           @_foreverInner.handleIndexchange data.index
+
+    _eventify: ->
+      if @options.normalize_height_on_resize
+        $window.bind 'resize', => @normalizeHeight()
 
     _setupForever: ->
       o = @options
@@ -647,9 +666,9 @@ do ($=jQuery, window=window, document=document) ->
         baseleft: o.inner2left
         forever_duplicate_count: o.forever_duplicate_count
         selector_item: o.item
-      $inner = @$el.find o.inner
-      $inner2 = @$el.find o.inner2
-      @_foreverInner = new ns.ForeverInner $inner, $inner2, options
+      @$inner = @$el.find o.inner
+      @$inner2 = @$el.find o.inner2
+      @_foreverInner = new ns.ForeverInner @$inner, @$inner2, options
       return this
 
     _prepareTouchdragh: ->
@@ -780,7 +799,21 @@ do ($=jQuery, window=window, document=document) ->
       @_touchdragh.updateInnerWidth innerW
       @$items.width stepW
       @_touchdragh.refresh()
+      @normalizeHeight()
       @adjustToFit()
+      return this
+
+    normalizeHeight: ->
+      return this if @options.normalize_height is false
+      $els = $()
+        .add(@$el)
+        .add(@$items)
+        .add(@$inner)
+        .add(@$inner2)
+      $els.css 'min-height', "0px"
+      h = ns.calcHighestHeight @$items
+      $els.css 'min-height', "#{h}px"
+      @trigger 'heightnormalized', h
       return this
 
     _calcLeftFromIndex: (index) ->

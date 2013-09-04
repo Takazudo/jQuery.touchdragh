@@ -1,0 +1,92 @@
+<!doctype html>
+<html class="no-js" lang="ja">
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles.css">
+<script src="../../EveEve/eveeve.js"></script>
+<script src="../../libs/jquery/1.5.1/jquery.js"></script>
+<script src="../../libs/jquery.transit.js"></script>
+<script src="../../jquery.touchdragh.js"></script>
+<script>
+$(function() {
+
+  $('#box1').touchdraghsteppy({
+    inner: '.box1-inner',
+    item: '.box1-item',
+    stepwidth: 300,
+    widthbetween: 20,
+    normalize_height: true
+  });
+
+  $('#box2').touchdraghsteppy({
+    inner: '.box2-inner',
+    inner2: '.box2-inner2',
+    item: '.box2-item',
+    stepwidth: 300,
+    widthbetween: 20,
+    inner2left: -20,
+    forever: true,
+    forever_duplicate_count: 1,
+    normalize_height: true
+  });
+
+  $('#box3').touchdraghsteppy({
+    inner: '.box3-inner',
+    item: '.box3-item',
+    stepwidth: 300,
+    widthbetween: 20,
+    normalize_height: true,
+    normalize_height_on_resize: true
+  });
+
+});
+</script>
+</head>
+<body><div class="all">
+
+<h1>TouchdraghSteppy<br>normalize_height option demo</h1>
+<p>With `normalize_height` option, UI height will be normalized to the highest item automatically.</p>
+
+<hr>
+
+<h2>standard</h2>
+
+<div class="box1" id="box1">
+  <div class="box1-inner">
+    <div class="box1-item">
+      The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. 
+    </div>
+    <div class="box1-item">The quick brown fox jumps over the lazy dog.</div>
+    <div class="box1-item">The quick brown fox jumps over the lazy dog.</div>
+  </div>
+</div>
+
+<h2>with `forever`</h2>
+
+<div class="box2" id="box2">
+  <div class="box2-inner"><div class="box2-inner2">
+    <div class="box2-item">
+      The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. 
+    </div>
+    <div class="box2-item">The quick brown fox jumps over the lazy dog.</div>
+    <div class="box2-item">The quick brown fox jumps over the lazy dog.</div>
+  </div></div>
+</div>
+
+<h2>normalize_height_on_resize</h2>
+<p>Check what will occur to zoom out in chrome.</p>
+
+<div class="box3" id="box3">
+  <div class="box3-inner">
+    <div class="box3-item">
+      The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. 
+    </div>
+    <div class="box3-item">The quick brown fox jumps over the lazy dog.</div>
+    <div class="box3-item">The quick brown fox jumps over the lazy dog.</div>
+  </div>
+</div>
+
+</div></body>
+</html>

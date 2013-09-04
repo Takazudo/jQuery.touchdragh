@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-09-03
+ * lastupdate: 2013-09-04
  * version: 1.6.3
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -9,7 +9,8 @@
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   (function($, window, document) {
-    var $document, ns;
+    var $document, $window, ns;
+    $window = $(window);
     $document = $(document);
     ns = $.TouchdraghNs = {};
     ns.normalizeXY = function(event) {
@@ -25,6 +26,18 @@
         res.y = event.pageY || orig.pageY;
       }
       return res;
+    };
+    ns.calcHighestHeight = function($els) {
+      var highest;
+      highest = 0;
+      $els.each(function(i, el) {
+        var h;
+        h = $(el).outerHeight();
+        if (h > highest) {
+          return highest = h;
+        }
+      });
+      return highest;
     };
     ns.support = {};
     ns.ua = {};
@@ -781,7 +794,9 @@
         stepwidth: 300,
         widthbetween: 0,
         forever: false,
-        forever_duplicate_count: 1
+        forever_duplicate_count: 1,
+        normalize_height: false,
+        normalize_height_on_resize: false
       };
 
       function TouchdraghSteppy($el, options) {
@@ -794,6 +809,7 @@
         if (o.triggerrefreshimmediately) {
           this.refresh();
         }
+        this._eventify();
         if (o.forever) {
           this.to(this._foreverInner.baseIndex + o.startindex);
           this.on('indexchange', function(data) {
@@ -802,8 +818,17 @@
         }
       }
 
+      TouchdraghSteppy.prototype._eventify = function() {
+        var _this = this;
+        if (this.options.normalize_height_on_resize) {
+          return $window.bind('resize', function() {
+            return _this.normalizeHeight();
+          });
+        }
+      };
+
       TouchdraghSteppy.prototype._setupForever = function() {
-        var $inner, $inner2, o, options;
+        var o, options;
         o = this.options;
         if (!o.forever) {
           return this;
@@ -815,9 +840,9 @@
           forever_duplicate_count: o.forever_duplicate_count,
           selector_item: o.item
         };
-        $inner = this.$el.find(o.inner);
-        $inner2 = this.$el.find(o.inner2);
-        this._foreverInner = new ns.ForeverInner($inner, $inner2, options);
+        this.$inner = this.$el.find(o.inner);
+        this.$inner2 = this.$el.find(o.inner2);
+        this._foreverInner = new ns.ForeverInner(this.$inner, this.$inner2, options);
         return this;
       };
 
@@ -985,7 +1010,21 @@
         this._touchdragh.updateInnerWidth(innerW);
         this.$items.width(stepW);
         this._touchdragh.refresh();
+        this.normalizeHeight();
         this.adjustToFit();
+        return this;
+      };
+
+      TouchdraghSteppy.prototype.normalizeHeight = function() {
+        var $els, h;
+        if (this.options.normalize_height === false) {
+          return this;
+        }
+        $els = $().add(this.$el).add(this.$items).add(this.$inner).add(this.$inner2);
+        $els.css('min-height', "0px");
+        h = ns.calcHighestHeight(this.$items);
+        $els.css('min-height', "" + h + "px");
+        this.trigger('heightnormalized', h);
         return this;
       };
 

@@ -1,0 +1,151 @@
+* {
+  margin:0;
+  padding:0;
+}
+a {
+  color:#00f;
+}
+button {
+  padding:4px;
+}
+body {
+  font-family:sans-serif;
+  text-align:center;
+}
+.all {
+  padding:20px 10px;
+  overflow-x:hidden;
+}
+h1 {
+  font-size:1.4em;
+}
+h2 {
+  font-size:1.2em;
+  padding:20px 0 0;
+}
+h2 + p {
+  padding:8px 0 20px;
+}
+hr {
+  margin:20px 0 0;
+}
+
+.box1 {
+  width:300px;
+  max-width:600px;
+  background:#333;
+  margin:0 auto;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+  cursor:move;
+  margin:0 auto 20px;
+  position:relative;
+  border-top:3px solid blue;
+  border-bottom:3px solid blue;
+}
+.box1,
+.box1 * {
+  -webkit-touch-callout: none;
+  touch-callout: none;
+}
+  .box1-inner {
+    position:absolute;
+    left:0;
+    top:0;
+    width:600px;
+  }
+    .box1-item {
+      float:left;
+      width:300px;
+      text-align:center;
+      margin:0 0 0 20px;
+      background:#f00;
+      color:#fff;
+      text-align:left;
+    }
+    .box1-item:first-child {
+      margin-left:0;
+    }
+
+.box2 {
+  width:300px;
+  max-width:600px;
+  background:#333;
+  margin:0 auto;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+  cursor:move;
+  margin:0 auto 20px;
+  position:relative;
+  border-top:3px solid blue;
+  border-bottom:3px solid blue;
+}
+.box2,
+.box2 * {
+  -webkit-touch-callout: none;
+  touch-callout: none;
+}
+  .box2-inner {
+    position:absolute;
+    left:0;
+    top:0;
+    width:600px;
+  }
+    .box2-inner2 {
+      position:absolute;
+      left:-20px;
+      top:0;
+    }
+      .box2-item {
+        float:left;
+        width:300px;
+        text-align:center;
+        margin:0 0 0 20px;
+        background:#f00;
+        color:#fff;
+        text-align:left;
+      }
+
+.box3 {
+  width:300px;
+  max-width:600px;
+  background:#333;
+  margin:0 auto;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+  cursor:move;
+  margin:0 auto 20px;
+  position:relative;
+  border-top:3px solid blue;
+  border-bottom:3px solid blue;
+}
+.box3,
+.box3 * {
+  -webkit-touch-callout: none;
+  touch-callout: none;
+}
+  .box3-inner {
+    position:absolute;
+    left:0;
+    top:0;
+    width:600px;
+  }
+    .box3-item {
+      float:left;
+      width:300px;
+      text-align:center;
+      margin:0 0 0 20px;
+      background:#f00;
+      color:#fff;
+      text-align:left;
+    }
+    .box3-item:first-child {
+      margin-left:0;
+    }
+
