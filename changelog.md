@@ -1,5 +1,9 @@
 # Change log
 
+## v1.6.5
+
+* indexchange events now returns 'normalizedIndex' if forever was on
+
 ## v1.6.4
 
 * implemented `normalize_height` feature
