@@ -782,6 +782,8 @@ do ($=jQuery, window=window, document=document) ->
       if lastIndex isnt index
         data =
           index: @currentIndex
+        if @options.forever
+          data.normalizedIndex = @_calcNormalizedIndex()
         @trigger 'indexchange', data
       return true
 
@@ -834,6 +836,18 @@ do ($=jQuery, window=window, document=document) ->
           left += stepW
           left += betweenW unless i is 0
       return left
+    
+    _calcNormalizedIndex: ->
+      o = @options
+      l = @_foreverInner.origItemsCount
+      offset = l * o.forever_duplicate_count
+      index = @currentIndex - offset
+      res = index % l
+      if index < 0
+        res = l - (Math.abs res)
+        if res is l
+          res = 0
+      res
 
     adjustToFit: (animate=false, callback) ->
       stepW = @options.stepwidth

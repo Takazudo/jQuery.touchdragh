@@ -61,7 +61,8 @@ $(function() {
           });
         });
         instance.on('indexchange', function(data) {
-          console.log('indexchange: ' + data.index);
+          console.log('indexchange(index) : ' + data.index);
+          console.log('indexchange(normalizedIndex) : ' + data.normalizedIndex);
         });
       }
     });

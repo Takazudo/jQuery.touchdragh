@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-09-04
+ * lastupdate: 2013-09-05
  * version: 1.6.4
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -988,6 +988,9 @@
           data = {
             index: this.currentIndex
           };
+          if (this.options.forever) {
+            data.normalizedIndex = this._calcNormalizedIndex();
+          }
           this.trigger('indexchange', data);
         }
         return true;
@@ -1056,6 +1059,22 @@
           }
         }
         return left;
+      };
+
+      TouchdraghSteppy.prototype._calcNormalizedIndex = function() {
+        var index, l, o, offset, res;
+        o = this.options;
+        l = this._foreverInner.origItemsCount;
+        offset = l * o.forever_duplicate_count;
+        index = this.currentIndex - offset;
+        res = index % l;
+        if (index < 0) {
+          res = l - (Math.abs(res));
+          if (res === l) {
+            res = 0;
+          }
+        }
+        return res;
       };
 
       TouchdraghSteppy.prototype.adjustToFit = function(animate, callback) {
