@@ -1,0 +1,106 @@
+<!doctype html>
+<html class="no-js" lang="ja">
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles.css">
+<script src="../../EveEve/eveeve.js"></script>
+<script src="../../libs/jquery/1.5.1/jquery.js"></script>
+<script src="../../jquery.touchdragh.js"></script>
+<script>
+$(function() {
+
+  var console = window.console || {};
+  console.log = console.log || $.noop;
+
+  $('.container').each(function(i, el) {
+
+    var $el = $(el);
+    var $prev = $('.prev', el);
+    var $next = $('.next', el);
+    var $gallery = $('.gallery', el);
+    var instance;
+
+    var currentIndex = 0;
+    var minIndex = 0;
+    var maxIndex = $('.item', el).length - 5;
+    var slideCount = 5;
+
+    var handlePagerStats = function(index) {
+      var cls = 'disabled', method;
+      method = (index === minIndex) ? 'addClass' : 'removeClass';
+      $prev[method](cls);
+      method = (index === maxIndex) ? 'addClass' : 'removeClass';
+      $next[method](cls);
+    };
+
+    var onPrevClick = function() {
+      var nextIndex = currentIndex - slideCount;
+      if(nextIndex < minIndex) {
+        nextIndex = minIndex;
+      }
+      instance.to(nextIndex, true);
+    };
+    var onNextClick = function() {
+      var nextIndex = currentIndex + slideCount;
+      if(nextIndex > maxIndex) {
+        nextIndex = maxIndex;
+      }
+      instance.to(nextIndex, true);
+    };
+
+    $prev.click(onPrevClick);
+    $next.click(onNextClick);
+    handlePagerStats(0);
+
+    $gallery.touchdraghsteppy({
+      inner: '.gallery-inner',
+      item: '.item',
+      stepwidth: 150,
+      widthbetween: 10,
+      maxindex: maxIndex,
+      beforefirstrefresh: function(ins) {
+        instance = ins;
+        instance.on('indexchange', function(data) {
+          handlePagerStats(data.index);
+          currentIndex = data.index;
+        });
+      }
+    });
+
+  });
+});
+</script>
+</head>
+<body><div class="all">
+
+<h1>TouchdraghSteppy step demo</h1>
+
+<div class="container">
+  <div class="prev">&lt;</div>
+  <div class="gallerywrap">
+    <div class="gallery">
+      <div class="gallery-inner">
+        <div class="item first">1</div>
+        <div class="item">2</div>
+        <div class="item">3</div>
+        <div class="item">4</div>
+        <div class="item">5</div>
+        <div class="item">6</div>
+        <div class="item">7</div>
+        <div class="item">8</div>
+        <div class="item">9</div>
+        <div class="item">10</div>
+        <div class="item">11</div>
+        <div class="item">12</div>
+        <div class="item">13</div>
+        <div class="item">14</div>
+      </div>
+    </div>
+  </div>
+  <div class="next">&gt;</div>
+</div>
+
+</div></body>
+</html>
