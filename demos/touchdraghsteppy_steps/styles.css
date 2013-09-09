@@ -10,18 +10,26 @@ button {
 }
 body {
   font-family:sans-serif;
-	text-align:center;
+  text-align:center;
 }
 .all {
-  padding:20px 10px;
+  padding:20px 20px;
   overflow-x:hidden;
+  background:#eee;
+  max-width:1000px;
+  margin:0 auto;
 }
 h1 {
   padding:0 0 20px;
 }
+p {
+  text-align:left;
+  margin:30px 0;
+}
+
 
 .container {
-  width:790px;
+  width:910px;
   margin:0 auto;
   position:relative;
   -webkit-user-select:none;
@@ -43,10 +51,10 @@ h1 {
     cursor:pointer;
   }
   .prev {
-    left:-50px;
+    left:0;
   }
   .next {
-    right:-50px;
+    right:0;
   }
   .prev.disabled,
   .next.disabled {
@@ -60,6 +68,7 @@ h1 {
   cursor:move;
   position:relative;
   overflow:hidden;
+  margin:0 auto;
 }
 .gallery,
 .gallery * {
@@ -93,3 +102,9 @@ h1 {
       height:100%;
       display:block;
     }
+
+@media only screen and (max-width: 800px) {
+  .all {
+    background:#ddd;
+  }
+}
