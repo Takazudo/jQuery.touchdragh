@@ -1,6 +1,6 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
  * lastupdate: 2013-09-09
- * version: 1.6.5
+ * version: 1.6.6
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
 (function() {
