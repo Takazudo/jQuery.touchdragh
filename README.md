@@ -20,6 +20,7 @@ See demos.
 * touchdraghsteppy forever option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_forever/)
 * touchdraghsteppy normalize_height option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_normalizeheight/)
 * touchdraghsteppy unsteppify [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_unsteppify/)
+* touchdraghsteppy unsteppify manually slide [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_manuallySlide/)
 * dragger option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/dragger/)
 
 ## Browsers
