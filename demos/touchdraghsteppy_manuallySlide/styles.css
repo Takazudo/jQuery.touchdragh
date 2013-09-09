@@ -28,6 +28,9 @@ p {
 .buttons {
   padding:20px 0;
 }
+  .buttons div {
+    padding:0 0 15px;
+  }
   .buttons button {
     font-size:1.5em;
     margin:0 5px;

@@ -1,0 +1,109 @@
+<!doctype html>
+<html class="no-js" lang="ja">
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles.css">
+<script src="../../EveEve/eveeve.js"></script>
+<script src="../../libs/jquery/1.5.1/jquery.js"></script>
+<script src="../../jquery.touchdragh.js"></script>
+<script>
+$(function() {
+
+  var console = window.console || {};
+  console.log = console.log || $.noop;
+
+  var $gallery = $('.gallery');
+  var maxIndex = $('.item', $gallery).length - 5;
+  var instance;
+  var $do_unsteppify = $('#do-unsteppify');
+  var $do_steppify = $('#do-steppify');
+  var $do_minus = $('#do-minus');
+  var $do_plus = $('#do-plus');
+
+  $gallery.touchdraghsteppy({
+    inner: '.gallery-inner',
+    item: '.item',
+    stepwidth: 150,
+    widthbetween: 10,
+    maxindex: maxIndex
+  });
+
+  instance = $gallery.data('touchdraghsteppy');
+
+  var manualliSlide = function(diff) {
+    var l = instance.touchdragh.currentSlideLeft();
+    instance.touchdragh.slide((l+diff), true);
+  };
+  var turnOn = function($button) {
+    $button.removeAttr('disabled');
+  };
+  var turnOff = function($button) {
+    $button.attr('disabled', 'disabled');
+  };
+
+  $do_unsteppify.click(function() {
+    instance.unsteppify();
+    turnOff($do_unsteppify);
+    turnOn($do_steppify);
+    turnOn($do_minus);
+    turnOn($do_plus);
+  });
+  $do_steppify.click(function() {
+    instance.steppify();
+    turnOn($do_unsteppify);
+    turnOff($do_steppify);
+    turnOff($do_minus);
+    turnOff($do_plus);
+  });
+
+  $do_minus.click(function() {
+    manualliSlide(-400);
+  });
+  $do_plus.click(function() {
+    manualliSlide(400);
+  });
+
+});
+</script>
+</head>
+<body><div class="all">
+
+<h1>TouchdraghSteppy manually slide demo</h1>
+
+<p>Use `instance.touchdragh` to handle slide methods directly.</p>
+
+<div class="gallery">
+  <div class="gallery-inner">
+    <div class="item first">1</div>
+    <div class="item">2</div>
+    <div class="item">3</div>
+    <div class="item">4</div>
+    <div class="item">5</div>
+    <div class="item">6</div>
+    <div class="item">7</div>
+    <div class="item">8</div>
+    <div class="item">9</div>
+    <div class="item">10</div>
+    <div class="item">11</div>
+    <div class="item">12</div>
+    <div class="item">13</div>
+    <div class="item">14</div>
+  </div>
+</div>
+
+<div class="buttons">
+  <div>
+    <button id="do-unsteppify">unsteppify</button>
+    <button id="do-steppify" disabled>steppify</button>
+  </div>
+  <div>
+    <button id="do-minus" disabled>-400</button>
+    <button id="do-plus" disabled>+400</button>
+  </div>
+</div>
+
+
+</div></body>
+</html>

@@ -691,7 +691,7 @@ do ($=jQuery, window=window, document=document) ->
         touchdragh.on 'dragend', => @trigger 'dragend'
         touchdragh.on 'moveend', @_handleMoveend
 
-      @_touchdragh = new ns.TouchdraghEl @$el, options
+      @touchdragh = new ns.TouchdraghEl @$el, options
       return this
 
     _handleMoveend: =>
@@ -703,7 +703,7 @@ do ($=jQuery, window=window, document=document) ->
 
     _calcIndexFromCurrentSlideLeft: ->
 
-      left = @_touchdragh.currentSlideLeft()
+      left = @touchdragh.currentSlideLeft()
 
       index = 0
       nextIndex = null
@@ -802,9 +802,9 @@ do ($=jQuery, window=window, document=document) ->
       innerW = stepW * l
       if l > 0
         innerW += @options.widthbetween * (l-1)
-      @_touchdragh.updateInnerWidth innerW
+      @touchdragh.updateInnerWidth innerW
       @$items.width stepW
-      @_touchdragh.refresh()
+      @touchdragh.refresh()
       @normalizeHeight()
       @adjustToFit()
       return this
@@ -858,13 +858,13 @@ do ($=jQuery, window=window, document=document) ->
       betweenW = @options.widthbetween
       return $.Deferred (defer) =>
         left_after = @_calcLeftFromIndex @currentIndex
-        left_pre = @_touchdragh.currentSlideLeft()
+        left_pre = @touchdragh.currentSlideLeft()
         if left_after is left_pre
           defer.resolve()
           return this
         @trigger 'slidestart' unless @_sliding
         @_sliding = true
-        @_touchdragh.slide left_after, animate, =>
+        @touchdragh.slide left_after, animate, =>
           @_sliding = false
           data =
             index: @currentIndex
