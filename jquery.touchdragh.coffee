@@ -642,6 +642,7 @@ do ($=jQuery, window=window, document=document) ->
 
     constructor: (@$el, options) ->
       o = @options = $.extend {}, @defaults, options
+      @steppy_disabled = false
       @currentIndex = o.startindex
       @_setupForever()
       @_prepareTouchdragh()
@@ -688,14 +689,17 @@ do ($=jQuery, window=window, document=document) ->
         touchdragh.on 'dragstart', => @trigger 'dragstart'
         touchdragh.on 'drag', => @trigger 'drag'
         touchdragh.on 'dragend', => @trigger 'dragend'
-
-        touchdragh.on 'moveend', =>
-          index = @_calcIndexFromCurrentSlideLeft()
-          @updateIndex index
-          @adjustToFit true
+        touchdragh.on 'moveend', @_handleMoveend
 
       @_touchdragh = new ns.TouchdraghEl @$el, options
       return this
+
+    _handleMoveend: =>
+      if @steppy_disabled
+        return
+      index = @_calcIndexFromCurrentSlideLeft()
+      @updateIndex index
+      @adjustToFit true
 
     _calcIndexFromCurrentSlideLeft: ->
 
@@ -888,6 +892,14 @@ do ($=jQuery, window=window, document=document) ->
     updateOption: (options) ->
       @options = $.extend @options, options
       @refresh()
+      return this
+
+    steppify: ->
+      @steppy_disabled = false
+      return this
+
+    unsteppify: ->
+      @steppy_disabled = true
       return this
 
   # ============================================================

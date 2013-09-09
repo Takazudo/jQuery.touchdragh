@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-09-05
+ * lastupdate: 2013-09-09
  * version: 1.6.5
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -802,7 +802,9 @@
       function TouchdraghSteppy($el, options) {
         var o;
         this.$el = $el;
+        this._handleMoveend = __bind(this._handleMoveend, this);
         o = this.options = $.extend({}, this.defaults, options);
+        this.steppy_disabled = false;
         this.currentIndex = o.startindex;
         this._setupForever();
         this._prepareTouchdragh();
@@ -875,15 +877,20 @@
           touchdragh.on('dragend', function() {
             return _this.trigger('dragend');
           });
-          return touchdragh.on('moveend', function() {
-            var index;
-            index = _this._calcIndexFromCurrentSlideLeft();
-            _this.updateIndex(index);
-            return _this.adjustToFit(true);
-          });
+          return touchdragh.on('moveend', _this._handleMoveend);
         };
         this._touchdragh = new ns.TouchdraghEl(this.$el, options);
         return this;
+      };
+
+      TouchdraghSteppy.prototype._handleMoveend = function() {
+        var index;
+        if (this.steppy_disabled) {
+          return;
+        }
+        index = this._calcIndexFromCurrentSlideLeft();
+        this.updateIndex(index);
+        return this.adjustToFit(true);
       };
 
       TouchdraghSteppy.prototype._calcIndexFromCurrentSlideLeft = function() {
@@ -1148,6 +1155,16 @@
       TouchdraghSteppy.prototype.updateOption = function(options) {
         this.options = $.extend(this.options, options);
         this.refresh();
+        return this;
+      };
+
+      TouchdraghSteppy.prototype.steppify = function() {
+        this.steppy_disabled = false;
+        return this;
+      };
+
+      TouchdraghSteppy.prototype.unsteppify = function() {
+        this.steppy_disabled = true;
         return this;
       };
 
