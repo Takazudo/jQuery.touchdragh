@@ -1,5 +1,10 @@
 # Change log
 
+## v1.6.6
+
+* Steppy: implemented `steppify`,`unsteppify` methods
+* Steppy: allowd direct access to touchdragh instance
+
 ## v1.6.5
 
 * indexchange events now returns 'normalizedIndex' if forever was on
