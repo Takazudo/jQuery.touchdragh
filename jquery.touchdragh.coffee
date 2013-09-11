@@ -449,6 +449,12 @@ do ($=jQuery, window=window, document=document) ->
     currentSlideLeft: ->
       ns.getLeftPx @$inner
 
+    isCurrentLeftMax: ->
+      return @currentSlideLeft() is @_minLeft
+
+    isCurrentLeftMin: ->
+      return @currentSlideLeft() is @_maxLeft
+
     updateInnerWidth: (val) ->
       @$inner.width val
       return this

@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-09-09
+ * lastupdate: 2013-09-11
  * version: 1.6.6
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -517,6 +517,14 @@
 
       TouchdraghEl.prototype.currentSlideLeft = function() {
         return ns.getLeftPx(this.$inner);
+      };
+
+      TouchdraghEl.prototype.isCurrentLeftMax = function() {
+        return this.currentSlideLeft() === this._minLeft;
+      };
+
+      TouchdraghEl.prototype.isCurrentLeftMin = function() {
+        return this.currentSlideLeft() === this._maxLeft;
       };
 
       TouchdraghEl.prototype.updateInnerWidth = function(val) {
