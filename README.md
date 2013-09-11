@@ -9,19 +9,20 @@ See demos.
 
 ## Demos
 
-* touchdragh [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdragh/)
-* touchdragh with transition [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdragh_transit/)
-* touchdragh forever option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdragh_forever/)
-* touchdraghfitty [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghfitty/)
-* touchdraghfitty with transition [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghfitty_transit/)
-* touchdraghsteppy [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy/)
-* touchdraghsteppy with transition [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_transit/)
-* touchdraghsteppy refresh method [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_refresh/)
-* touchdraghsteppy forever option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_forever/)
-* touchdraghsteppy normalize_height option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_normalizeheight/)
-* touchdraghsteppy unsteppify [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_unsteppify/)
-* touchdraghsteppy unsteppify manually slide [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_manuallySlide/)
-* dragger option [demo](http://takazudo.github.io/jQuery.touchdragh/demos/dragger/)
+* touchdragh: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdragh/)
+* touchdragh with transition: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdragh_transit/)
+* touchdragh forever option: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdragh_forever/)
+* touchdraghfitty: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghfitty/)
+* touchdraghfitty with transition: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghfitty_transit/)
+* touchdraghsteppy: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy/)
+* touchdraghsteppy with transition: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_transit/)
+* touchdraghsteppy refresh method: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_refresh/)
+* touchdraghsteppy forever option: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_forever/)
+* touchdraghsteppy normalize_height option: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_normalizeheight/)
+* touchdraghsteppy unsteppify: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_unsteppify/)
+* touchdraghsteppy unsteppify manually slide: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_manuallySlide/)
+* touchdraghsteppy media queries with [$.ViewportWatcher](https://github.com/Takazudo/jQuery.ViewportWatcher): [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_mq/)
+* dragger option: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/dragger/)
 
 ## Browsers
 

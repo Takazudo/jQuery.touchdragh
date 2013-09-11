@@ -1,5 +1,9 @@
 # Change log
 
+## v1.6.7
+
+* implemented some methods to handle media queries
+
 ## v1.6.6
 
 * Steppy: implemented `steppify`,`unsteppify` methods
