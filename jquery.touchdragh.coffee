@@ -186,6 +186,7 @@ do ($=jQuery, window=window, document=document) ->
       dragger: null
       useonlydragger: false
       forever: false
+      mstouchaction: 'pan-y'
 
     constructor: (@$el, options) ->
 
@@ -228,7 +229,7 @@ do ($=jQuery, window=window, document=document) ->
 
     _handlePointerEvents: ->
       return @ unless ns.support.mspointer
-      @el.style.msTouchAction = 'none'
+      @el.style.msTouchAction = @options.mstouchaction
       return this
 
     _prepareEls: ->

@@ -198,7 +198,8 @@
         alwayspreventtouchmove: false,
         dragger: null,
         useonlydragger: false,
-        forever: false
+        forever: false,
+        mstouchaction: 'pan-y'
       };
 
       function TouchdraghEl($el, options) {
@@ -251,7 +252,7 @@
         if (!ns.support.mspointer) {
           return this;
         }
-        this.el.style.msTouchAction = 'none';
+        this.el.style.msTouchAction = this.options.mstouchaction;
         return this;
       };
 
