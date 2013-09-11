@@ -1,0 +1,125 @@
+* {
+  margin:0;
+  padding:0;
+}
+a {
+  color:#00f;
+}
+button {
+  padding:4px;
+}
+body {
+  font-family:sans-serif;
+  text-align:center;
+}
+.all {
+  padding:20px 20px;
+  overflow-x:hidden;
+  background:#eee;
+  max-width:790px;
+  min-width:280px;
+  margin:0 auto;
+}
+h1 {
+  font-size:1.5em;
+  padding:0 0 20px;
+}
+p {
+  text-align:left;
+  margin:30px 0;
+}
+
+#flash {
+  font-size:20px;
+  background:#FDBE2B;
+  padding:10px 0;
+  margin:0 0 10px;
+}
+
+.container {
+  max-width:790px;
+  margin:0 auto;
+  position:relative;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+  padding:0 0 40px;
+}
+  .prev,
+  .next {
+    position:absolute;
+    top:110px;
+    height:40px;
+    line-height:40px;
+    font-size:20px;
+    width:80px;
+    text-align:center;
+    background:#000;
+    color:#fff;
+    cursor:pointer;
+  }
+  .prev {
+    left:0;
+  }
+  .next {
+    right:0;
+  }
+  .prev.disabled,
+  .next.disabled {
+    filter: alpha(opacity=50); /* ie */
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; /* ie 8 */
+    opacity:.5;
+  }
+
+.gallery {
+  max-width:790px;
+  height:100px;
+  background:#ddd;
+  cursor:move;
+  position:relative;
+  overflow:hidden;
+  margin:0 auto;
+}
+.gallery,
+.gallery * {
+  -webkit-touch-callout: none;
+  touch-callout: none;
+}
+  .gallery-inner {
+    position:absolute;
+    left:0;
+    top:0;
+    height:100%;
+    /*width:600px;*/
+  }
+    .item {
+      float:left;
+      height:100%;
+      width:80px;
+      font-size:30px;
+      line-height:100px;
+      text-align:center;
+      margin:0 0 0 10px;
+      background:#F1594A;
+      color:#fff;
+    }
+    .first {
+      margin-left:0;
+    }
+
+@media only screen and (min-width: 830px) {
+  .prev,
+  .next {
+    top:160px;
+  }
+  .gallery {
+    height:150px;
+  }
+    .item {
+      width:150px;
+      font-size:60px;
+      line-height:150px;
+      background:#D63431;
+    }
+}
