@@ -1,0 +1,141 @@
+* {
+  margin:0;
+  padding:0;
+}
+a {
+  color:#00f;
+}
+button {
+  padding:4px;
+}
+body {
+  font-family:sans-serif;
+  text-align:center;
+}
+.all {
+  padding:20px 20px;
+  overflow-x:hidden;
+  background:#eee;
+  max-width:790px;
+  min-width:280px;
+  margin:0 auto;
+}
+h1 {
+  font-size:1.5em;
+  padding:0 0 20px;
+}
+p {
+  text-align:left;
+  margin:30px 0;
+}
+
+#flash {
+  font-size:20px;
+  background:#FDBE2B;
+  padding:10px 0;
+  margin:0 0 10px;
+}
+
+.container {
+  width:300px;
+  margin:0 auto;
+  position:relative;
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+}
+  .pager {
+    overflow:hidden;
+    padding:10px 0 0;
+  }
+    .prev,
+    .next {
+      height:40px;
+      line-height:40px;
+      font-size:20px;
+      width:80px;
+      text-align:center;
+      background:#000;
+      color:#fff;
+      cursor:pointer;
+    }
+    .prev {
+      float:left;
+    }
+    .next {
+      float:right;
+    }
+    .prev.disabled,
+    .next.disabled {
+      filter: alpha(opacity=50); /* ie */
+      -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; /* ie 8 */
+      opacity:.5;
+    }
+
+.gallery {
+  cursor:move;
+  position:relative;
+  width:300px;
+  margin:0 auto;
+  overflow:hidden;
+}
+.gallery,
+.gallery * {
+  -webkit-touch-callout: none;
+  touch-callout: none;
+}
+  .gallery-inner {
+    position:absolute;
+    left:0;
+    top:0;
+    overflow:hidden;
+    /*width:600px;*/
+  }
+
+    .item {
+      float:left;
+      width:300px;
+      margin:0 0 0 10px;
+      overflow:hidden;
+      text-align:left;
+    }
+      .img {
+        font-size:40px;
+        line-height:92px;
+        text-align:center;
+        background:#F1594A;
+        color:#fff;
+        width:152px;
+        height:92px;
+        float:left;
+      }
+      .text {
+        font-size:13px;
+        padding:4px 0 0 10px;
+        overflow:hidden;
+      }
+    .first {
+      margin-left:0;
+    }
+
+@media only screen and (min-width: 830px) {
+  .container {
+    width:790px;
+  }
+    .gallery {
+      width:790px;
+    }
+      .item {
+        width:190px;
+      }
+        .img {
+          line-height:115px;
+          width:190px;
+          height:115px;
+          float:none;
+        }
+        .text {
+          padding:8px 0 0;
+        }
+}

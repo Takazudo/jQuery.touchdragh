@@ -1,0 +1,213 @@
+<!doctype html>
+<html class="no-js" lang="ja">
+<head>
+<meta charset="utf-8">
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles.css">
+<script src="../external_libs/modernizr.min.js"></script>
+<script src="../../EveEve/eveeve.js"></script>
+<script src="../../libs/jquery/1.5.1/jquery.js"></script>
+<script src="../external_libs/viewportSize.js"></script>
+<script src="../external_libs/jquery.viewportwatcher.js"></script>
+<script src="../../jquery.touchdragh.js"></script>
+<script>
+$(function() {
+
+  // things for test
+
+  var console = window.console || {};
+  console.log = console.log || $.noop;
+
+  var $flash = $('#flash');
+  var flashMsg = function(msg) {
+    $flash
+      .stop()
+      .empty()
+      .hide()
+      .text(msg)
+      .css({
+        opacity: 0,
+        display: 'block'
+      })
+      .animate({
+        opacity: 1
+      });
+  };
+
+  // store scene size
+
+  var currentScreenSize = 'small'
+  
+  // viewport watcher
+
+  var watcher = new $.ViewportWatcher(function(o) {
+    o.option({
+      notify_on_init: false
+    });
+    o.when(function(width) {
+      if(width < 830) { return true; }
+      return false;
+    }, {
+      match: function() {
+        currentScreenSize = 'small'
+        o.trigger('getsmall');
+      }
+    });
+    o.when(function(width) {
+      if(830 <= width) { return true; }
+      return false;
+    }, {
+      match: function() {
+        currentScreenSize = 'large'
+        o.trigger('getlarge');
+      }
+    });
+  });
+
+  // setup steppy
+
+  $('.container').each(function(i, el) {
+
+    var $el = $(el);
+    var $prev = $('.prev', el);
+    var $next = $('.next', el);
+    var $gallery = $('.gallery', el);
+    var $items = $('.item', el);
+    var instance;
+
+    var minIndex = 0;
+    var maxIndex = $items.length - 1;
+    var slideCount = 1;
+
+    var handlePagerStats = function() {
+      var index = instance.currentIndex;
+      var cls = 'disabled', method;
+      method_prev = (index === minIndex) ? 'addClass' : 'removeClass';
+      method_next = (index === maxIndex) ? 'addClass' : 'removeClass';
+      $prev[method_prev](cls);
+      $next[method_next](cls);
+    };
+
+    var onPrevClick = function() {
+      var nextIndex = instance.currentIndex - slideCount;
+      if(nextIndex < minIndex) { nextIndex = minIndex; }
+      instance.to(nextIndex, true);
+    };
+    var onNextClick = function() {
+      var nextIndex = instance.currentIndex + slideCount;
+      if(nextIndex > maxIndex) { nextIndex = maxIndex; }
+      instance.to(nextIndex, true);
+    };
+
+    $prev.click(onPrevClick);
+    $next.click(onNextClick);
+
+    $gallery.touchdraghsteppy({
+      inner: '.gallery-inner',
+      item: '.item',
+      stepwidth: 300,
+      widthbetween: 10,
+      maxindex: maxIndex,
+      normalize_height: true,
+      beforefirstrefresh: function(ins) {
+        instance = ins;
+        instance.on('indexchange', function(data) {
+          handlePagerStats();
+        });
+      }
+    });
+
+    handlePagerStats(0);
+
+    if(Modernizr.mq('only all')) {
+      watcher
+        .on('getsmall', function() {
+          flashMsg('small layout');
+          maxIndex = $items.length - 1;
+          instance.updateOption({
+            stepwidth: 300,
+            maxindex: maxIndex
+          });
+          handlePagerStats();
+        })
+        .on('getlarge', function() {
+          flashMsg('large layout');
+          maxIndex = $items.length - 4;
+          instance.updateOption({
+            stepwidth: 190,
+            maxindex: maxIndex
+          });
+          handlePagerStats();
+        });
+    } else {
+      instance.updateOption({ stepwidth: 190 });
+      instance.touchdragh.refresh();
+      handlePagerStats();
+    }
+    watcher
+      .on('resize', function() {
+        instance.touchdragh.refresh();
+        handlePagerStats();
+      })
+      .invokeNotification();
+
+    //instance.touchdragh.on('refresh moveend afterslide', function() {
+    //  handlePagerStats();
+    //});
+
+  });
+});
+</script>
+</head>
+<body><div class="all">
+
+<h1>RWD demo</h1>
+<div id="flash"></div>
+
+<div class="container">
+  <div class="gallerywrap">
+    <div class="gallery">
+      <div class="gallery-inner">
+        <div class="item first">
+          <div class="img">1</div>
+          <div class="text">The quick brown fox jumps over the lazy dog.</div>
+        </div>
+        <div class="item">
+          <div class="img">2</div>
+          <div class="text">The quick brown fox jumps over the lazy dog.</div>
+        </div>
+        <div class="item">
+          <div class="img">3</div>
+          <div class="text">The quick brown fox jumps over the lazy dog.</div>
+        </div>
+        <div class="item">
+          <div class="img">4</div>
+          <div class="text">The quick brown fox jumps over the lazy dog.</div>
+        </div>
+        <div class="item">
+          <div class="img">5</div>
+          <div class="text">The quick brown fox jumps over the lazy dog.</div>
+        </div>
+        <div class="item">
+          <div class="img">6</div>
+          <div class="text">The quick brown fox jumps over the lazy dog.</div>
+        </div>
+        <div class="item">
+          <div class="img">7</div>
+          <div class="text">The quick brown fox jumps over the lazy dog.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pager">
+    <div class="prev">&lt;</div>
+    <div class="next">&gt;</div>
+  </div>
+</div>
+
+<p>The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.</p>
+<p>The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the lazy dog.</p>
+
+</div></body>
+</html>
