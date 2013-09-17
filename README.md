@@ -21,8 +21,12 @@ See demos.
 * touchdraghsteppy normalize_height option: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_normalizeheight/)
 * touchdraghsteppy unsteppify: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_unsteppify/)
 * touchdraghsteppy unsteppify manually slide: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_manuallySlide/)
-* touchdraghsteppy media queries with [$.ViewportWatcher](https://github.com/Takazudo/jQuery.ViewportWatcher): [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_mq/)
 * dragger option: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/dragger/)
+
+### with Media Queries using [$.ViewportWatcher](https://github.com/Takazudo/jQuery.ViewportWatcher)
+
+* touchdraghsteppy media queries example: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_mq/)
+* touchdraghsteppy media queries example2: [demo](http://takazudo.github.io/jQuery.touchdragh/demos/touchdraghsteppy_mq2/)
 
 ## Browsers
 
