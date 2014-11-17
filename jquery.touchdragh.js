@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2013-09-11
+ * lastupdate: 2014-11-17
  * version: 1.6.6
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -987,6 +987,12 @@
           } else if (goingToNegative) {
             nextIndex -= 1;
           }
+        }
+        if (nextIndex < 0) {
+          nextIndex = 0;
+        }
+        if (nextIndex > this._maxindex) {
+          nextIndex = this._maxindex;
         }
         return nextIndex;
       };

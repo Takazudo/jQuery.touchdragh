@@ -781,6 +781,12 @@ do ($=jQuery, window=window, document=document) ->
           nextIndex += 1
         else if goingToNegative
           nextIndex -= 1
+          
+      # handle over index
+      if nextIndex < 0
+        nextIndex = 0
+      if nextIndex > @_maxindex
+        nextIndex = @_maxindex
 
       return nextIndex
     
