@@ -1,0 +1,3 @@
+[submodule "EveEve"]
+	path = EveEve
+	url = https://github.com/Takazudo/EveEve.git
