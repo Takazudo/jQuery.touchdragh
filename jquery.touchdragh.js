@@ -1,5 +1,5 @@
 /*! jQuery.touchdragh (https://github.com/Takazudo/jQuery.touchdragh)
- * lastupdate: 2014-11-17
+ * lastupdate: 2014-11-18
  * version: 1.6.6
  * author: 'Takazudo' Takeshi Takatsudo <takazudo@gmail.com>
  * License: MIT */
@@ -199,7 +199,8 @@
         dragger: null,
         useonlydragger: false,
         forever: false,
-        mstouchaction: 'pan-y'
+        mstouchaction: 'pan-y',
+        handeleAnnoyingDragPreventers: true
       };
 
       function TouchdraghEl($el, options) {
@@ -212,6 +213,7 @@
         this.options = $.extend({}, this.defaults, options);
         this.disabled = false;
         this._prepareDraggers();
+        this._handeleAnnoyingDragPreventers();
         ns.startWatchGestures();
         this._handlePointerEvents();
         this._prepareEls();
@@ -220,6 +222,15 @@
           this.refresh();
         }
       }
+
+      TouchdraghEl.prototype._handeleAnnoyingDragPreventers = function() {
+        if (!this.options.handeleAnnoyingDragPreventers) {
+          return;
+        }
+        return this.$draggers.delegate('a, img', 'drag', function(e) {
+          return e.preventDefault();
+        });
+      };
 
       TouchdraghEl.prototype._prepareDraggers = function() {
         if (this.options.useonlydragger) {

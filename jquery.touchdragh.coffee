@@ -187,6 +187,7 @@ do ($=jQuery, window=window, document=document) ->
       useonlydragger: false
       forever: false
       mstouchaction: 'pan-y'
+      handeleAnnoyingDragPreventers: true
 
     constructor: (@$el, options) ->
 
@@ -195,12 +196,19 @@ do ($=jQuery, window=window, document=document) ->
       @disabled = false
 
       @_prepareDraggers()
+      @_handeleAnnoyingDragPreventers()
 
       ns.startWatchGestures()
       @_handlePointerEvents()
       @_prepareEls()
       @_eventify()
       @refresh() if @options.triggerrefreshimmediately
+      
+    _handeleAnnoyingDragPreventers: ->
+      if not @options.handeleAnnoyingDragPreventers
+        return
+      @$draggers.delegate 'a, img', 'drag', (e) ->
+        e.preventDefault()
 
     _prepareDraggers: ->
 
